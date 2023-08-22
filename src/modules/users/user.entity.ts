@@ -10,7 +10,7 @@ export class User {
   @IsString({ message: 'Tên người dùng không được chứa số' })
   @IsNotEmpty()
   @Matches(/^[^\d]+$/)
-  name: string;
+  username: string;
 
   @Column()
   @IsNotEmpty()
@@ -18,9 +18,14 @@ export class User {
 
   @Column()
   @IsNotEmpty()
-  age: number;
+  email: string;
 
-  @Column()
-  @IsNotEmpty()
-  address: string;
+  @Column({ default: 'user' })
+  role: string;
+
+  @Column({ nullable: true, default: null })
+  refresh_token: string;
+
+  @Column({ default: 1 })
+  status: number;
 }

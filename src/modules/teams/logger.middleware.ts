@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 
 export function logger(req: Request, res: Response, next: NextFunction) {
-  console.log(`Request :${req.method}`);
+  console.log(
+    `URL:${req.protocol}://${req.hostname}:${3000}${req.originalUrl} METHOD:${
+      req.method
+    }`,
+  );
+
   next();
 }

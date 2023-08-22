@@ -1,10 +1,19 @@
-import { IsString, IsInt, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 export class CreateTeamDto {
-  @IsNotEmpty({ message: 'không được bỏ trống' })
-  @IsString({ message: 'Tên phải là một chuỗi' })
-  name: string;
+  id: number;
 
-  @IsNotEmpty({ message: 'không được bỏ trống' })
-  @IsInt({ message: 'Member phải là một số' })
-  member: number;
+  @IsNotEmpty({ message: 'Not be empty' })
+  @IsString({ message: 'Name must be a string' })
+  name_team: string;
+
+  @IsNotEmpty({ message: 'Not be empty' })
+  logo_team: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  managerId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  leagueId: number;
 }

@@ -11,33 +11,53 @@ import { logger } from './modules/teams/logger.middleware';
 import { UserModule } from './modules/users/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateUserDto } from './modules/users/dto/create-user.dto';
-import { TodoModule } from './modules/todolist/todolist.module';
-import { Todo } from './modules/todolist/todo.entity';
 import { User } from './modules/users/user.entity';
+import { LeagueModule } from './modules/league/league.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config/dist/config.module';
+import { UserController } from './modules/users/user.controller';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { join } from 'path';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { dataSourceOptions } from 'db/data-source';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '1234',
-      database: 'Nestjs',
-      autoLoadEntities: true,
-      logging: false,
-      entities: [Todo],
-      migrations: [],
-      subscribers: [],
-      synchronize: true,
+    TypeOrmModule.forRoot(dataSourceOptions),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get('MAIL_HOST'),
+          secure: false,
+          auth: {
+            user: config.get('MAIL_USER'),
+            pass: config.get('MAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: `"GoalLine Team Hub" <${config.get('MAIL_FROM')}>`,
+        },
+        template: {
+          dir: join(__dirname, 'templates/email'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
     }),
     TeamsModule,
     UserModule,
-    TodoModule,
+    LeagueModule,
+    AuthModule,
+    ConfigModule.forRoot(),
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(logger).forRoutes(TeamsController);
+    consumer.apply(logger).forRoutes(UserController);
   }
 }

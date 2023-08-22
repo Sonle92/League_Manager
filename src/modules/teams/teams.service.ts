@@ -1,17 +1,20 @@
 import { Injectable, Optional, Inject } from '@nestjs/common';
-import { Team } from './interfaces/teams.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Team } from './teams.entity';
+import { Repository } from 'typeorm';
+import { CreateTeamDto } from './dto/create-team.dto';
 
 @Injectable()
 export class TeamsService {
-  private readonly teams: Team[] = [];
+  constructor(
+    @InjectRepository(Team)
+    private teamsRepository: Repository<Team>,
+  ) {}
 
-  findAll(): Team[] {
-    return this.teams;
+  findAll(): Promise<Team[]> {
+    return this.teamsRepository.find();
   }
-  create(team: Team) {
-    this.teams.push(team);
+  create(createteamdto: CreateTeamDto): Promise<Team> {
+    return this.teamsRepository.save(createteamdto);
   }
-}
-export class HttpService<T> {
-  constructor(@Optional() @Inject('HTTP_OPTIONS') private httpClient: T) {}
 }
