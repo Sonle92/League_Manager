@@ -21,6 +21,8 @@ import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { dataSourceOptions } from 'db/data-source';
+import { PlayerModule } from './modules/players/players.module';
+import { ScheduleModule } from './modules/schedule/schedule.module';
 
 @Module({
   imports: [
@@ -52,6 +54,8 @@ import { dataSourceOptions } from 'db/data-source';
     TeamsModule,
     UserModule,
     LeagueModule,
+    PlayerModule,
+    ScheduleModule,
     AuthModule,
     ConfigModule.forRoot(),
   ],

@@ -12,7 +12,10 @@ export class TeamsService {
   ) {}
 
   findAll(): Promise<Team[]> {
-    return this.teamsRepository.find();
+    return this.teamsRepository.find({ relations: ['player'] });
+  }
+  findOne(id: number): Promise<Team | null> {
+    return this.teamsRepository.findOne({ where: { id } });
   }
   create(createteamdto: CreateTeamDto): Promise<Team> {
     return this.teamsRepository.save(createteamdto);

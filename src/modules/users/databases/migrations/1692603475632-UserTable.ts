@@ -14,13 +14,3 @@ export class UserTable1692603475632 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "user"`);
   }
 }
-
-// export class CreatePlayerTable1692603476000 extends BaseMigration {
-//   run(queryRunner: QueryRunner) {
-//     this.create('Player', (table) => {
-//       table.primaryUuid('íd');
-//       table.string('name').length(255).nullable(true);
-//       table.uuid('teamId').foreign('Team');
-//     });
-//   }
-// }

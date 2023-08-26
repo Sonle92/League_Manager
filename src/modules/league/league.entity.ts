@@ -1,5 +1,13 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Team } from '../teams/teams.entity';
+import { ScheduleMatch } from '../schedule/schedule.entity';
 
 @Entity()
 export class League {
@@ -7,20 +15,20 @@ export class League {
   league_id: number;
 
   @Column()
-  @IsString()
-  @IsNotEmpty()
   league_name: string;
 
   @Column()
-  @IsString()
-  @IsNotEmpty()
   sport: string;
 
   @Column({ type: 'date' })
-  @IsNotEmpty()
   start_date: Date;
 
   @Column({ type: 'date' })
-  @IsNotEmpty()
   end_date: Date;
+
+  @OneToMany(() => Team, (team) => team.league)
+  team: Team[];
+
+  @OneToMany(() => ScheduleMatch, (schedule) => schedule.league)
+  shedule: ScheduleMatch[];
 }

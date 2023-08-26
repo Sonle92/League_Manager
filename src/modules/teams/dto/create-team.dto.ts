@@ -1,19 +1,32 @@
-import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsNotEmpty,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
+class LeagueDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  league_id: number;
+}
 export class CreateTeamDto {
+  @ApiProperty()
   id: number;
 
+  @ApiProperty()
   @IsNotEmpty({ message: 'Not be empty' })
   @IsString({ message: 'Name must be a string' })
-  name_team: string;
+  name: string;
 
+  @ApiProperty()
   @IsNotEmpty({ message: 'Not be empty' })
-  logo_team: string;
+  logo: string;
 
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => LeagueDto)
   @IsNotEmpty()
-  @IsNumber()
-  managerId: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  leagueId: number;
+  league: LeagueDto;
 }

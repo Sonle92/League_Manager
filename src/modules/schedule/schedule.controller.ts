@@ -12,23 +12,25 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { TeamsService } from './teams.service';
-import { CreateTeamDto } from './dto/create-team.dto';
+import { ScheduleService } from './schedule.service';
 import { ApiTags } from '@nestjs/swagger';
-
-@ApiTags('CRUD-Teams')
-@Controller('teams')
-export class TeamsController {
-  constructor(private teamsService: TeamsService) {}
+import { CreateScheduleMatchDto } from './dto/create-schedule.dto';
+@ApiTags('CRUD-schedule')
+@Controller('schedule')
+export class ScheduleController {
+  constructor(private scheduleService: ScheduleService) {}
 
   @Post()
-  async create(@Body(new ValidationPipe()) createTeamDto: CreateTeamDto) {
-    await this.teamsService.create(createTeamDto);
-    return { message: 'Tạo mới thành công!' };
+  async create(
+    @Body(new ValidationPipe()) createScheduleMatchDto: CreateScheduleMatchDto,
+    @Res() res,
+  ) {
+    const response = await this.scheduleService.create(createScheduleMatchDto);
+    return res.status(HttpStatus.OK).json(response);
   }
   @Get()
   async findAll(@Res() res, @Req() req) {
-    const response = await this.teamsService.findAll();
+    const response = await this.scheduleService.findAll();
     if (!response) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
@@ -36,7 +38,7 @@ export class TeamsController {
   }
   @Get(':id')
   async findOne(@Param('id') id: number, @Res() res) {
-    const response = await this.teamsService.findOne(id);
+    const response = await this.scheduleService.findOne(id);
     if (!response) {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
     }

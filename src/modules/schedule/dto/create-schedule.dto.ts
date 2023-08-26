@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -11,28 +12,45 @@ class TeamDto {
   @IsNotEmpty()
   id: number;
 }
-export class CreatePlayerDto {
+class LeagueDto {
   @ApiProperty()
-  player_id: number;
+  @IsNotEmpty()
+  league_id: number;
+}
+export class CreateScheduleMatchDto {
+  @ApiProperty()
+  schedule_id: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsDateString()
+  date: Date;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  player_name: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  age: number;
+  start_time: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  poisition: string;
+  venue: string;
 
   @ApiProperty()
   @ValidateNested()
   @Type(() => TeamDto)
   @IsNotEmpty()
-  team: TeamDto;
+  homeTeam: TeamDto;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => TeamDto)
+  @IsNotEmpty()
+  awayTeam: TeamDto;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => LeagueDto)
+  @IsNotEmpty()
+  league: LeagueDto;
 }
