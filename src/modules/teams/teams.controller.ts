@@ -15,6 +15,7 @@ import {
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { ApiTags } from '@nestjs/swagger';
+import dataSource from 'db/data-source';
 
 @ApiTags('CRUD-Teams')
 @Controller('teams')
@@ -24,6 +25,14 @@ export class TeamsController {
   @Post()
   async create(@Body(new ValidationPipe()) createTeamDto: CreateTeamDto) {
     const response = await this.teamsService.create(createTeamDto);
+    const leagueId = response['leagueId'].id;
+    const teamId = response['id'];
+    console.log(leagueId, teamId);
+    const addteamToleague = await this.teamsService.addTeamToLeague(
+      leagueId,
+      teamId,
+    );
+    // console.log(addteamToleague);
     return { message: 'Successful new creation!', response };
   }
   @Get()

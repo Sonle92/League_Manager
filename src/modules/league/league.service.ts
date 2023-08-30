@@ -12,7 +12,9 @@ export class LeagueService {
   ) {}
 
   findAll(): Promise<League[]> {
-    return this.LeaguesRepository.find({ relations: ['team'] });
+    return this.LeaguesRepository.find({
+      relations: ['team'],
+    });
   }
 
   findOne(id: string): Promise<League | null> {

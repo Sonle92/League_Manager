@@ -29,6 +29,7 @@ export class LeagueController {
     if (!response) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
+    const addTeamToLeague = response;
     return res.status(HttpStatus.OK).json(response);
   }
   @Get(':id')
