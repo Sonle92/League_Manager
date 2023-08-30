@@ -30,6 +30,7 @@ import { ForgotDto } from './dto/forgot.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SendMailDto } from './dto/send-mail.dto';
 import * as cookie from 'cookie';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('Auth-Register-Login-Logout-ChangePassword-ForgotPassword')
 @Controller('auth')
@@ -74,6 +75,7 @@ export class AuthController {
 
   @Put('change-password')
   @UsePipes(ValidationPipe)
+  @ApiBearerAuth()
   @Auth(Role.Manager, Role.Admin, Role.User)
   async changePassword(
     @Req() req,

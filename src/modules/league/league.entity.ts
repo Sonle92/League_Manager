@@ -3,19 +3,22 @@ import {
   Column,
   Entity,
   ManyToOne,
+  ManyToMany,
   OneToMany,
+  JoinTable,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Team } from '../teams/teams.entity';
 import { ScheduleMatch } from '../schedule/schedule.entity';
+import { Standing } from '../Standing/standing.entity';
 
 @Entity()
 export class League {
   @PrimaryGeneratedColumn()
-  league_id: number;
+  id: string;
 
   @Column()
-  league_name: string;
+  name: string;
 
   @Column()
   sport: string;
@@ -26,9 +29,23 @@ export class League {
   @Column({ type: 'date' })
   end_date: Date;
 
-  @OneToMany(() => Team, (team) => team.league)
+  @ManyToMany(() => Team, (team) => team.league)
+  @JoinTable({
+    name: 'league_team',
+    joinColumn: {
+      name: 'leagueId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'teamId',
+      referencedColumnName: 'id',
+    },
+  })
   team: Team[];
 
   @OneToMany(() => ScheduleMatch, (schedule) => schedule.league)
   shedule: ScheduleMatch[];
+
+  @OneToMany(() => Standing, (standing) => standing.league)
+  standing: Standing[];
 }

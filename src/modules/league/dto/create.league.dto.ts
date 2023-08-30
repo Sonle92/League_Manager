@@ -1,13 +1,20 @@
-import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsDateString,
+  ValidateNested,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
 export class CreateLeagueDto {
   @ApiProperty()
-  league_id: number;
+  id: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  league_name: string;
+  name: string;
 
   @ApiProperty()
   @IsString()

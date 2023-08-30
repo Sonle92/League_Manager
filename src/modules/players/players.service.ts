@@ -15,21 +15,19 @@ export class PlayerService {
     return this.PlayerRepository.find({ relations: ['team'] });
   }
 
-  findOne(player_id: number): Promise<Player | null> {
-    return this.PlayerRepository.findOne({ where: { player_id } });
+  findOne(id: string): Promise<Player | null> {
+    return this.PlayerRepository.findOne({ where: { id } });
   }
   create(createplayerdto: CreatePlayerDto): Promise<Player> {
     return this.PlayerRepository.save(createplayerdto);
   }
   async update(
-    player_id: number,
+    id: string,
     createplayerdto: CreatePlayerDto,
   ): Promise<Player | undefined> {
-    const a = await this.PlayerRepository.findOne({ where: { player_id } });
+    const a = await this.PlayerRepository.findOne({ where: { id } });
     if (!a) {
-      throw new NotFoundException(
-        'League with ID ' + player_id + ' not found.',
-      );
+      throw new NotFoundException('League with ID ' + id + ' not found.');
     }
     const entityColumns = Object.keys(a);
     const updateColumns = Object.keys(createplayerdto);
@@ -46,13 +44,11 @@ export class PlayerService {
     Object.assign(a, createplayerdto);
     return this.PlayerRepository.save(a);
   }
-  async remove(player_id: number): Promise<void> {
-    const b = await this.PlayerRepository.findOneBy({ player_id });
+  async remove(id: string): Promise<void> {
+    const b = await this.PlayerRepository.findOneBy({ id });
     if (!b) {
-      throw new NotFoundException(
-        'League with ID ' + player_id + ' not found.',
-      );
+      throw new NotFoundException('League with ID ' + id + ' not found.');
     }
-    await this.PlayerRepository.delete(player_id);
+    await this.PlayerRepository.delete(id);
   }
 }

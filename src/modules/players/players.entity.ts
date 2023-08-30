@@ -11,7 +11,7 @@ import { Team } from '../teams/teams.entity';
 @Entity()
 export class Player {
   @PrimaryGeneratedColumn()
-  player_id: number;
+  id: string;
 
   @Column()
   player_name: string;

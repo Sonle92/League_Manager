@@ -23,8 +23,8 @@ export class TeamsController {
 
   @Post()
   async create(@Body(new ValidationPipe()) createTeamDto: CreateTeamDto) {
-    await this.teamsService.create(createTeamDto);
-    return { message: 'Tạo mới thành công!' };
+    const response = await this.teamsService.create(createTeamDto);
+    return { message: 'Successful new creation!', response };
   }
   @Get()
   async findAll(@Res() res, @Req() req) {
@@ -35,7 +35,7 @@ export class TeamsController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res) {
+  async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.teamsService.findOne(id);
     if (!response) {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);

@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateUserDto {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   @IsString({ message: 'Tên người dùng không được chứa số' })
@@ -21,8 +21,4 @@ export class CreateUserDto {
   @ApiProperty()
   @IsNotEmpty()
   role: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  status: number;
 }

@@ -16,7 +16,7 @@ export class ScheduleService {
       relations: ['league', 'homeTeam', 'awayTeam'],
     });
   }
-  findOne(id: number): Promise<ScheduleMatch | null> {
+  findOne(id: string): Promise<ScheduleMatch | null> {
     return this.scheduleRepository.findOne({ where: { id } });
   }
   create(

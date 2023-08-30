@@ -12,7 +12,7 @@ import { League } from '../league/league.entity';
 @Entity()
 export class ScheduleMatch {
   @PrimaryGeneratedColumn()
-  schedule_id: number;
+  id: string;
 
   @Column({ type: 'date' })
   date: Date;
@@ -34,4 +34,10 @@ export class ScheduleMatch {
 
   @ManyToOne(() => Team, (team) => team.awayMatches)
   awayTeam: Team;
+
+  @Column()
+  homeTeam_Score: number;
+
+  @Column()
+  awayTeam_Score: number;
 }

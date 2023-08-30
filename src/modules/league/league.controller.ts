@@ -32,7 +32,7 @@ export class LeagueController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res) {
+  async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.LeagueService.findOne(id);
     if (!response) {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
@@ -60,7 +60,7 @@ export class LeagueController {
   }
   @Put(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() createleaguedto: CreateLeagueDto,
     @Res() res,
   ): Promise<League> {
@@ -72,7 +72,7 @@ export class LeagueController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Delete(':id')
-  async delete(@Param('id') id: number, @Res() res) {
+  async delete(@Param('id') id: string, @Res() res) {
     const result = await this.LeagueService.remove(id);
     const response = {
       message: 'DELETE SUCCESS',

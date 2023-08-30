@@ -12,6 +12,4 @@ export class RegisterUserDto {
   password: string;
 
   role: string;
-
-  status: number;
 }

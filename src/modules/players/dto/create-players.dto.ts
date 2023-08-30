@@ -9,11 +9,11 @@ import { ApiProperty } from '@nestjs/swagger';
 class TeamDto {
   @ApiProperty()
   @IsNotEmpty()
-  id: number;
+  id: string;
 }
 export class CreatePlayerDto {
   @ApiProperty()
-  player_id: number;
+  id: string;
 
   @ApiProperty()
   @IsNotEmpty()

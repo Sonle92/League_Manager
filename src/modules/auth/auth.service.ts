@@ -73,7 +73,7 @@ export class AuthService {
     // return this.generateToken(payload);
   }
 
-  private async generateToken(payload: { id: number; email: string }) {
+  private async generateToken(payload: { id: string; email: string }) {
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: '1d',
     });
@@ -81,12 +81,10 @@ export class AuthService {
       secret: this.configService.get<string>('SECRET'),
       expiresIn: this.configService.get<string>('REFRESH_TOKEN'),
     });
-
     await this.usersRepository.update(
       { email: payload.email },
       { refresh_token: refresh_token },
     );
-
     return { access_token, refresh_token };
   }
 
@@ -118,7 +116,7 @@ export class AuthService {
     }
   }
   async changePasssword(
-    id: number,
+    id: string,
     changePassswordDto: ChangePasswordDto,
   ): Promise<any> {
     const user = await this.usersService.findOne(id);

@@ -37,7 +37,7 @@ export class ScheduleController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Get(':id')
-  async findOne(@Param('id') id: number, @Res() res) {
+  async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.scheduleService.findOne(id);
     if (!response) {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);

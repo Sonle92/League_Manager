@@ -10,16 +10,16 @@ import { ApiProperty } from '@nestjs/swagger';
 class TeamDto {
   @ApiProperty()
   @IsNotEmpty()
-  id: number;
+  id: string;
 }
 class LeagueDto {
   @ApiProperty()
   @IsNotEmpty()
-  league_id: number;
+  id: string;
 }
 export class CreateScheduleMatchDto {
   @ApiProperty()
-  schedule_id: number;
+  id: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -53,4 +53,12 @@ export class CreateScheduleMatchDto {
   @Type(() => LeagueDto)
   @IsNotEmpty()
   league: LeagueDto;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  homeTeam_Score: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  awayTeam_Score: number;
 }

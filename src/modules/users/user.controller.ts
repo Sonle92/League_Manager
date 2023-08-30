@@ -57,7 +57,7 @@ export class UserController {
   @Get(':id')
   @ApiOkResponse({ status: 200, description: 'get user by id successfully' })
   @ApiNotFoundResponse({ status: 404, description: 'get user by id failed' })
-  async findOne(@Param('id') id: number, @Res() res) {
+  async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.usersService.findOne(id);
     if (!response) {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
@@ -109,7 +109,7 @@ export class UserController {
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   @Auth(Role.Admin)
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() createuserdto: CreateUserDto,
   ): Promise<User> {
     return this.usersService.update(id, createuserdto);
@@ -138,7 +138,7 @@ export class UserController {
   @ApiNotFoundResponse({ status: 404, description: 'User not found' })
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @Auth(Role.Admin)
-  async delete(@Param('id') id: number, @Res() res) {
+  async delete(@Param('id') id: string, @Res() res) {
     const result = await this.usersService.remove(id);
     const response = {
       message: 'DELETE SUCCESS',

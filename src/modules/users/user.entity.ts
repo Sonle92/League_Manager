@@ -4,7 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   @IsString({ message: 'Tên người dùng không được chứa số' })
@@ -25,7 +25,4 @@ export class User {
 
   @Column({ nullable: true, default: null })
   refresh_token: string;
-
-  @Column({ default: 1 })
-  status: number;
 }
