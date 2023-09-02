@@ -1,14 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Player } from './players.entity';
+import { Player } from './entities/players.entity';
 import { CreatePlayerDto } from './dto/create-players.dto';
+import { PlayerRepository } from './repositories/players.repository';
 
 @Injectable()
 export class PlayerService {
   constructor(
     @InjectRepository(Player)
-    private PlayerRepository: Repository<Player>,
+    private PlayerRepository: PlayerRepository,
   ) {}
 
   findAll(): Promise<Player[]> {

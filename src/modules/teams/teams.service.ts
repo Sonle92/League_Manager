@@ -1,17 +1,19 @@
 import { Injectable, Optional, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Team } from './teams.entity';
+import { Team } from './entities/teams.entity';
 import { Repository } from 'typeorm';
 import { CreateTeamDto } from './dto/create-team.dto';
-import { LeagueTeam } from '../league_team/league_team.entity';
+import { LeagueTeam } from '../leagueTeam/entities/leagueTeam.entity';
+import { TeamRepository } from './repositories/teams.repository';
+import { LeagueTeamRepository } from '../leagueTeam/repositories/leagueTeam.repository';
 
 @Injectable()
 export class TeamsService {
   constructor(
     @InjectRepository(Team)
-    private teamsRepository: Repository<Team>,
+    private teamsRepository: TeamRepository,
     @InjectRepository(LeagueTeam)
-    private leagueTeamRepository: Repository<LeagueTeam>,
+    private leagueTeamRepository: LeagueTeamRepository,
   ) {}
 
   findAll(): Promise<Team[]> {
@@ -23,16 +25,14 @@ export class TeamsService {
   create(createteamdto: CreateTeamDto): Promise<Team> {
     return this.teamsRepository.save(createteamdto);
   }
-  async addTeamToLeague(leagueId: string, teamId: string): Promise<LeagueTeam> {
-    const league_team = {
-      leagueId: leagueId,
-      teamId: teamId,
-    };
+
+  async addLeagueToTeam(leagueTeam: LeagueTeam): Promise<any> {
     try {
-      const response = await this.leagueTeamRepository.save(league_team);
+      const response = await this.leagueTeamRepository.save(leagueTeam);
       return response;
     } catch (error) {
-      return error;
+      console.error('Lỗi khi thêm league vào team:', error);
+      throw error;
     }
   }
 }

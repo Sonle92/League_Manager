@@ -6,8 +6,8 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { League } from '../league/league.entity';
-import { Team } from '../teams/teams.entity';
+import { League } from '../league/entities/league.entity';
+import { Team } from '../teams/entities/teams.entity';
 
 @Entity()
 export class Standing {

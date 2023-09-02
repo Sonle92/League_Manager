@@ -11,11 +11,11 @@ export class StandingTable1693385675734 extends BaseMigration {
       table.integer('played').nullable();
       table.integer('points').nullable();
       table.integer('matches_won').nullable();
-      table.integer('matches_drawn').nullable();
-      table.integer('matches_lost').nullable();
-      table.integer('total_goals').nullable();
-      table.integer('total_goals_conceded').nullable();
-      table.integer('goal_difference').nullable();
+      table.integer('matchesDrawn').nullable();
+      table.integer('matcheslost').nullable();
+      table.integer('totalGoals').nullable();
+      table.integer('totalGoalsConceded').nullable();
+      table.integer('goalDifference').nullable();
     });
   }
 

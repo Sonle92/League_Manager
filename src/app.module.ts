@@ -6,16 +6,16 @@ import {
 } from '@nestjs/common';
 
 import { TeamsModule } from './modules/teams/teams.module';
-import { TeamsController } from './modules/teams/teams.controller';
-import { logger } from './modules/teams/logger.middleware';
+import { TeamsController } from './modules/teams/http/controllers/teams.controller';
+import { logger } from './modules/teams/midlewares/logger.middleware';
 import { UserModule } from './modules/users/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateUserDto } from './modules/users/dto/create-user.dto';
-import { User } from './modules/users/user.entity';
+import { User } from './modules/users/entities/user.entity';
 import { LeagueModule } from './modules/league/league.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config/dist/config.module';
-import { UserController } from './modules/users/user.controller';
+import { UserController } from './modules/users/http/controllers/user.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';

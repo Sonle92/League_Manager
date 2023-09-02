@@ -7,8 +7,8 @@ export class LeagueTable1693205608671 extends BaseMigration {
       table.primaryUuid('id');
       table.string('name').nullable();
       table.string('sport').nullable();
-      table.date('start_date').nullable();
-      table.date('end_date').nullable();
+      table.date('startDate').nullable();
+      table.date('endDate').nullable();
     });
   }
 

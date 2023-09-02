@@ -5,7 +5,7 @@ export class PlayerTable1693218644515 extends BaseMigration {
   async run(queryRunner: QueryRunner) {
     await this.create('player', (table) => {
       table.primaryUuid('id');
-      table.string('player_name').nullable();
+      table.string('playerName').nullable();
       table.integer('age').nullable();
       table.string('poisition').nullable();
       table.uuid('teamId').foreign('team');

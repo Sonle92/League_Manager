@@ -1,27 +1,26 @@
 import { Injectable, Optional, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ScheduleMatch } from './schedule.entity';
+import { Schedule } from './entities/schedule.entity';
 import { Repository } from 'typeorm';
-import { CreateScheduleMatchDto } from './dto/create-schedule.dto';
+import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { ScheduleRepository } from './repositories/schedule.repository';
 
 @Injectable()
 export class ScheduleService {
   constructor(
-    @InjectRepository(ScheduleMatch)
-    private scheduleRepository: Repository<ScheduleMatch>,
+    @InjectRepository(Schedule)
+    private scheduleRepository: ScheduleRepository,
   ) {}
 
-  findAll(): Promise<ScheduleMatch[]> {
+  findAll(): Promise<Schedule[]> {
     return this.scheduleRepository.find({
       relations: ['league', 'homeTeam', 'awayTeam'],
     });
   }
-  findOne(id: string): Promise<ScheduleMatch | null> {
+  findOne(id: string): Promise<Schedule | null> {
     return this.scheduleRepository.findOne({ where: { id } });
   }
-  create(
-    createScheduleMatchDto: CreateScheduleMatchDto,
-  ): Promise<ScheduleMatch> {
-    return this.scheduleRepository.save(createScheduleMatchDto);
+  create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
+    return this.scheduleRepository.save(createScheduleDto);
   }
 }

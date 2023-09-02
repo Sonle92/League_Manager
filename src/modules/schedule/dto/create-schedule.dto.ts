@@ -17,7 +17,7 @@ class LeagueDto {
   @IsNotEmpty()
   id: string;
 }
-export class CreateScheduleMatchDto {
+export class CreateScheduleDto {
   @ApiProperty()
   id: string;
 
@@ -29,7 +29,7 @@ export class CreateScheduleMatchDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  start_time: string;
+  startTime: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -49,16 +49,16 @@ export class CreateScheduleMatchDto {
   awayTeam: TeamDto;
 
   @ApiProperty()
+  @IsNotEmpty()
+  homeTeamScore: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  awayTeamScore: number;
+
+  @ApiProperty()
   @ValidateNested()
   @Type(() => LeagueDto)
   @IsNotEmpty()
   league: LeagueDto;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  homeTeam_Score: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  awayTeam_Score: number;
 }

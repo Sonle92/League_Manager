@@ -9,7 +9,7 @@ export class UserTable1693207928709 extends BaseMigration {
       table.string('password').nullable();
       table.string('email').nullable();
       table.string('role').default("'user'").nullable();
-      table.string('refresh_token').length(500).nullable();
+      table.string('refreshToken').length(500).nullable();
     });
   }
 

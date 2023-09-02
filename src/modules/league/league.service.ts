@@ -1,19 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { League } from './league.entity';
+import { League } from './entities/league.entity';
 import { CreateLeagueDto } from './dto/create.league.dto';
+import { LeagueRepository } from './repositories/league.repository';
 
 @Injectable()
 export class LeagueService {
   constructor(
     @InjectRepository(League)
-    private LeaguesRepository: Repository<League>,
+    private LeaguesRepository: LeagueRepository,
   ) {}
 
   findAll(): Promise<League[]> {
     return this.LeaguesRepository.find({
-      relations: ['team'],
+      relations: ['team', 'team.player'],
     });
   }
 

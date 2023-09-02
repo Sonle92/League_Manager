@@ -18,7 +18,7 @@ export class CreatePlayerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  player_name: string;
+  playerName: string;
 
   @ApiProperty()
   @IsNotEmpty()

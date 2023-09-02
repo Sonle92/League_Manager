@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cors from 'cors';
-import { logger } from './modules/teams/logger.middleware';
+import { logger } from './modules/teams/midlewares/logger.middleware';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {

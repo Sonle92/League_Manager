@@ -24,10 +24,10 @@ export class CreateLeagueDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsDateString()
-  start_date: Date;
+  startDate: Date;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsDateString()
-  end_date: Date;
+  endDate: Date;
 }
