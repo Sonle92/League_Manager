@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Player } from './entities/players.entity';
-import { CreatePlayerDto } from './dto/create-players.dto';
+import { CreatePlayerDto } from './dto/players.dto';
 import { PlayerRepository } from './repositories/players.repository';
 
 @Injectable()

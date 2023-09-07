@@ -7,15 +7,15 @@ export class StandingTable1693385675734 extends BaseMigration {
       table.primaryUuid('id');
       table.uuid('teamId').nullable().foreign('team');
       table.uuid('leagueId').nullable().foreign('league');
-      table.integer('rank').nullable();
-      table.integer('played').nullable();
-      table.integer('points').nullable();
-      table.integer('matches_won').nullable();
-      table.integer('matchesDrawn').nullable();
-      table.integer('matcheslost').nullable();
-      table.integer('totalGoals').nullable();
-      table.integer('totalGoalsConceded').nullable();
-      table.integer('goalDifference').nullable();
+      table.integer('rank').nullable().default(0);
+      table.integer('played').nullable().default(0);
+      table.integer('points').nullable().default(0);
+      table.integer('matchesWon').nullable().default(0);
+      table.integer('matchesDrawn').nullable().default(0);
+      table.integer('matchesLost').nullable().default(0);
+      table.integer('totalGoals').nullable().default(0);
+      table.integer('totalGoalsConceded').nullable().default(0);
+      table.integer('goalDifference').nullable().default(0);
     });
   }
 

@@ -11,24 +11,34 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ScheduleService } from '../../schedule.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateScheduleDto } from '../../dto/create-schedule.dto';
+import { CreateScheduleDto } from '../../dto/schedule.dto';
+import { Standing } from 'src/modules/Standing/entities/standing.entity';
+import { StandingsService } from 'src/modules/Standing/standing.service';
+import { Schedule } from '../../entities/schedule.entity';
 @ApiTags('CRUD-schedule')
 @Controller('schedule')
 export class ScheduleController {
-  constructor(private scheduleService: ScheduleService) {}
-
+  constructor(
+    private scheduleService: ScheduleService,
+    private standingService: StandingsService,
+  ) {}
   @Post()
   async create(
     @Body(new ValidationPipe()) createScheduleDto: CreateScheduleDto,
     @Res() res,
   ) {
     const response = await this.scheduleService.create(createScheduleDto);
+    const searchStanding = await this.scheduleService.UpdateStanding(
+      createScheduleDto,
+    );
+    console.log(searchStanding);
     return res.status(HttpStatus.OK).json(response);
   }
-  @Get()
+  @Get('all')
   async findAll(@Res() res, @Req() req) {
     const response = await this.scheduleService.findAll();
     if (!response) {
@@ -36,7 +46,7 @@ export class ScheduleController {
     }
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'Create Success!' }, response);
+      .json({ message: 'Create Success!', response });
   }
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {
@@ -46,4 +56,13 @@ export class ScheduleController {
     }
     return res.status(HttpStatus.OK).json(response);
   }
+  @Get()
+  async getScheduleByDateAndTime(@Query('date') date: Date) {
+    const schedules = await this.scheduleService.getSchedulesByDateTime(date);
+    return schedules;
+  }
+  // @Put()
+  // async updateStanding(@Body()homeTeamS){
+
+  // }
 }

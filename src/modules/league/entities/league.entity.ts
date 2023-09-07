@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Team } from '../../teams/entities/teams.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
-import { Standing } from '../../Standing/standing.entity';
+import { Standing } from '../../Standing/entities/standing.entity';
 import { LeagueTeam } from 'src/modules/leagueTeam/entities/leagueTeam.entity';
 
 @Entity()

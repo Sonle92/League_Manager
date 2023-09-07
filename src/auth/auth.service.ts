@@ -9,12 +9,12 @@ import {
   Res,
   Req,
 } from '@nestjs/common';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { RegisterUserDto } from './dto/registerUser.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { LoginUserDto } from './dto/login-user.dto';
+import { LoginUserDto } from './dto/loginUser.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ChangePasswordDto } from './dto/changePass.dto';
@@ -22,7 +22,7 @@ import { UsersService } from 'src/modules/users/user.service';
 import { Response } from 'express';
 import { MailerService } from '@nestjs-modules/mailer/dist';
 import { ForgotDto } from './dto/forgot.dto';
-import { SendMailDto } from './dto/send-mail.dto';
+import { SendMailDto } from './dto/sendMail.dto';
 
 @Injectable()
 export class AuthService {

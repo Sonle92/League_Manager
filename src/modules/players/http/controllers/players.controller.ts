@@ -16,7 +16,7 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 import { Player } from '../../entities/players.entity';
 import { PlayerService } from '../../players.service';
-import { CreatePlayerDto } from '../../dto/create-players.dto';
+import { CreatePlayerDto } from '../../dto/players.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Player')

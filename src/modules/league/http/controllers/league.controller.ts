@@ -16,7 +16,7 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 import { League } from '../../entities/league.entity';
 import { LeagueService } from '../../league.service';
-import { CreateLeagueDto } from '../../dto/create.league.dto';
+import { CreateLeagueDto } from '../../dto/league.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('CRUD-Leagues')
@@ -46,7 +46,9 @@ export class LeagueController {
     @Body(new ValidationPipe()) createleaguedto: CreateLeagueDto,
     @Res() res,
   ) {
+    await this.LeagueService.checkIfLeagueNameExists(createleaguedto.name);
     const result = await this.LeagueService.create(createleaguedto);
+
     if (!result) {
       throw new HttpException(
         'Error cannot send data',

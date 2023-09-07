@@ -24,6 +24,15 @@ export class Schedule {
   @Column()
   venue: string;
 
+  @Column()
+  homeTeamId: string;
+
+  @Column()
+  awayTeamId: string;
+
+  @Column()
+  leagueId: string;
+
   @ManyToOne(() => Team, (team) => team.homeTeamId)
   homeTeam: Team;
 

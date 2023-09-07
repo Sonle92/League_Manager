@@ -10,7 +10,7 @@ import { TeamsController } from './modules/teams/http/controllers/teams.controll
 import { logger } from './modules/teams/midlewares/logger.middleware';
 import { UserModule } from './modules/users/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CreateUserDto } from './modules/users/dto/create-user.dto';
+import { CreateUserDto } from './modules/users/dto/user.dto';
 import { User } from './modules/users/entities/user.entity';
 import { LeagueModule } from './modules/league/league.module';
 import { AuthModule } from './auth/auth.module';
@@ -23,6 +23,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { dataSourceOptions } from 'db/data-source';
 import { PlayerModule } from './modules/players/players.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
+import { StandingModule } from './modules/Standing/standing.module';
+import { LeagueTeamModule } from './modules/leagueTeam/leagueTeam.module';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
     PlayerModule,
     ScheduleModule,
     AuthModule,
+    StandingModule,
+    LeagueTeamModule,
     ConfigModule.forRoot(),
   ],
 })

@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { League } from './entities/league.entity';
-import { CreateLeagueDto } from './dto/create.league.dto';
+import { CreateLeagueDto } from './dto/league.dto';
 import { LeagueRepository } from './repositories/league.repository';
 
 @Injectable()
@@ -14,7 +19,7 @@ export class LeagueService {
 
   findAll(): Promise<League[]> {
     return this.LeaguesRepository.find({
-      relations: ['team', 'team.player'],
+      relations: ['team', 'team.player', 'standing'],
     });
   }
 
@@ -53,5 +58,17 @@ export class LeagueService {
       throw new NotFoundException('League with ID ' + id + ' not found.');
     }
     await this.LeaguesRepository.delete(id);
+  }
+  async checkIfLeagueNameExists(name: string): Promise<boolean> {
+    const existingLeague = await this.LeaguesRepository.findOne({
+      where: { name },
+    });
+    if (existingLeague) {
+      throw new HttpException(
+        'League name already exists',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return true;
   }
 }

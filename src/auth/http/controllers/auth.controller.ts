@@ -17,10 +17,10 @@ import {
   Delete,
   ExecutionContext,
 } from '@nestjs/common';
-import { RegisterUserDto } from '../../dto/register-user.dto';
+import { RegisterUserDto } from '../../dto/registerUser.dto';
 import { AuthService } from '../../auth.service';
 import { User } from 'src/modules/users/entities/user.entity';
-import { LoginUserDto } from '../../dto/login-user.dto';
+import { LoginUserDto } from '../../dto/loginUser.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { ChangePasswordDto } from '../../dto/changePass.dto';
 import { Auth } from 'src/auth/decorator/role.decorator';
@@ -28,7 +28,7 @@ import { Role } from 'src/auth/enums/role.enum';
 import { Response, Request } from 'express';
 import { ForgotDto } from '../../dto/forgot.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { SendMailDto } from '../../dto/send-mail.dto';
+import { SendMailDto } from '../../dto/sendMail.dto';
 import * as cookie from 'cookie';
 import { ApiBearerAuth } from '@nestjs/swagger';
 

@@ -1,25 +1,13 @@
 import {
-  IsString,
-  IsNumber,
+  IsDateString,
   IsNotEmpty,
+  IsNumber,
+  IsString,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-class LeagueDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
-class TeamDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
-export class CreateStandingDto {
-  @ApiProperty()
-  id: string;
-
+export class UpdateStandingDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
@@ -64,16 +52,4 @@ export class CreateStandingDto {
   @IsNotEmpty()
   @IsNumber()
   goalDifference: number;
-
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => LeagueDto)
-  @IsNotEmpty()
-  league: LeagueDto;
-
-  @ApiProperty()
-  @ValidateNested()
-  @Type(() => TeamDto)
-  @IsNotEmpty()
-  team: TeamDto;
 }

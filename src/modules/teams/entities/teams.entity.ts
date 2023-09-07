@@ -11,7 +11,7 @@ import {
 import { League } from '../../league/entities/league.entity';
 import { Player } from '../../players/entities/players.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
-import { Standing } from '../../Standing/standing.entity';
+import { Standing } from '../../Standing/entities/standing.entity';
 
 @Entity()
 export class Team {
@@ -47,6 +47,6 @@ export class Team {
   @OneToMany(() => Schedule, (schedule) => schedule.awayTeam)
   awayTeamId: Schedule[];
 
-  @OneToOne(() => Standing, (standing) => standing.team)
-  standing: Standing;
+  @OneToMany(() => Standing, (standing) => standing.team)
+  standing: Standing[];
 }
