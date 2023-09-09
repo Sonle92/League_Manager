@@ -30,8 +30,10 @@ export class StandingsService {
   async getStandingsByLeagueId(leagueId: string): Promise<Standing[]> {
     return this.standingRepository.find({ where: { leagueId } });
   }
-  async updateRank(): Promise<any> {
-    const standings = await this.standingRepository.find();
+  async updateRank(leagueId: string): Promise<any> {
+    const standings = await this.standingRepository.find({
+      where: { leagueId },
+    });
     standings.sort((a, b) => {
       if (a.points === b.points) {
         if (a.played === b.played) {

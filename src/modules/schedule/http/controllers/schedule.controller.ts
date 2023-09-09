@@ -35,7 +35,7 @@ export class ScheduleController {
     const searchStanding = await this.scheduleService.UpdateStanding(
       createScheduleDto,
     );
-    await this.standingService.updateRank();
+    await this.standingService.updateRank(createScheduleDto.league.id);
     return res.status(HttpStatus.OK).json(response);
   }
   @Get('all')
