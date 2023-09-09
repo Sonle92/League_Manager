@@ -98,4 +98,9 @@ export class ScheduleService {
       },
     });
   }
+  async findHistorySchedule(teamId: string): Promise<Schedule[]> {
+    return await this.scheduleRepository.find({
+      where: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
+    });
+  }
 }

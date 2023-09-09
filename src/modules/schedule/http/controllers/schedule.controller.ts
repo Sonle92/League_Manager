@@ -35,7 +35,7 @@ export class ScheduleController {
     const searchStanding = await this.scheduleService.UpdateStanding(
       createScheduleDto,
     );
-    console.log(searchStanding);
+    await this.standingService.updateRank();
     return res.status(HttpStatus.OK).json(response);
   }
   @Get('all')
@@ -60,6 +60,11 @@ export class ScheduleController {
   async getScheduleByDateAndTime(@Query('date') date: Date) {
     const schedules = await this.scheduleService.getSchedulesByDateTime(date);
     return schedules;
+  }
+  @Get('history-match/:teamId')
+  async findMatchesByTeamId(@Query('teamId') teamId: string) {
+    const matches = await this.scheduleService.findHistorySchedule(teamId);
+    return matches;
   }
   // @Put()
   // async updateStanding(@Body()homeTeamS){
