@@ -3,6 +3,7 @@ import {
   Optional,
   Inject,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
@@ -12,19 +13,34 @@ import { ScheduleRepository } from './repositories/schedule.repository';
 import { Standing } from '../Standing/entities/standing.entity';
 import { StandingRepository } from '../Standing/repositories/standing.repository';
 import { CreateStandingDto } from '../Standing/dto/create-standing.dto';
+import { StandingsService } from '../Standing/standing.service';
 
 @Injectable()
 export class ScheduleService {
   constructor(
     @InjectRepository(Schedule)
     private scheduleRepository: ScheduleRepository,
-    @InjectRepository(Standing)
-    private standingRepository: StandingRepository,
+    @Inject(forwardRef(() => StandingsService))
+    private standingsService: StandingsService,
   ) {}
+  // private standingsService: StandingsService,
+  // @Inject(forwardRef(() => StandingsService))
+  // private standingsService: StandingsService,
 
   findAll(): Promise<Schedule[]> {
     return this.scheduleRepository.find({
-      relations: ['league', 'homeTeam', 'awayTeam'],
+      relations: ['league', 'awayTeam', 'homeTeam'],
+      select: [
+        'id',
+        'date',
+        'startTime',
+        'venue',
+        'homeTeamScore',
+        'awayTeamScore',
+        'league',
+        'homeTeam',
+        'awayTeam',
+      ],
     });
   }
   findOne(id: string): Promise<Schedule | null> {
@@ -32,64 +48,6 @@ export class ScheduleService {
   }
   create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     return this.scheduleRepository.save(createScheduleDto);
-  }
-  async UpdateStanding(createScheduleDto: CreateScheduleDto): Promise<any> {
-    const homeTeam = await this.standingRepository.findOne({
-      where: {
-        teamId: createScheduleDto.homeTeam.id,
-        leagueId: createScheduleDto.league.id,
-      },
-    });
-    const awayTeam = await this.standingRepository.findOne({
-      where: {
-        teamId: createScheduleDto.awayTeam.id,
-        leagueId: createScheduleDto.league.id,
-      },
-    });
-    if (homeTeam && awayTeam) {
-      homeTeam.played += 1;
-      awayTeam.played += 1;
-    } else {
-      throw new NotFoundException();
-    }
-    const points =
-      createScheduleDto.homeTeamScore > createScheduleDto.awayTeamScore
-        ? [3, 0]
-        : createScheduleDto.homeTeamScore === createScheduleDto.awayTeamScore
-        ? [1, 1]
-        : [0, 3];
-
-    const [homeTeamPoints, awayTeamPoints] = points;
-    homeTeam.points += homeTeamPoints;
-    awayTeam.points += awayTeamPoints;
-    if (createScheduleDto.homeTeamScore > createScheduleDto.awayTeamScore) {
-      homeTeam.matchesWon += 1;
-    } else if (
-      createScheduleDto.homeTeamScore === createScheduleDto.awayTeamScore
-    ) {
-      homeTeam.matchesDrawn += 1;
-    } else {
-      homeTeam.matchesLost += 1;
-    }
-
-    if (createScheduleDto.homeTeamScore < createScheduleDto.awayTeamScore) {
-      awayTeam.matchesWon += 1;
-    } else if (
-      createScheduleDto.homeTeamScore === createScheduleDto.awayTeamScore
-    ) {
-      awayTeam.matchesDrawn += 1;
-    } else {
-      awayTeam.matchesLost += 1;
-    }
-    homeTeam.totalGoals += createScheduleDto.homeTeamScore;
-    homeTeam.totalGoalsConceded += createScheduleDto.awayTeamScore;
-    homeTeam.goalDifference = homeTeam.totalGoals - homeTeam.totalGoalsConceded;
-
-    awayTeam.totalGoals += createScheduleDto.awayTeamScore;
-    awayTeam.totalGoalsConceded += createScheduleDto.homeTeamScore;
-    awayTeam.goalDifference = awayTeam.totalGoals - awayTeam.totalGoalsConceded;
-    await this.standingRepository.save([homeTeam, awayTeam]);
-    return { homeTeam, awayTeam };
   }
   async getSchedulesByDateTime(date: Date): Promise<Schedule[]> {
     return this.scheduleRepository.find({
@@ -101,6 +59,63 @@ export class ScheduleService {
   async findHistorySchedule(teamId: string): Promise<Schedule[]> {
     return await this.scheduleRepository.find({
       where: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
+      relations: ['league', 'awayTeam', 'homeTeam'],
+      select: [
+        'id',
+        'date',
+        'startTime',
+        'venue',
+        'homeTeamScore',
+        'awayTeamScore',
+        'league',
+        'homeTeam',
+        'awayTeam',
+      ],
     });
+  }
+  async getMatchesByTeamInLeague(teamId: string, leagueId: string) {
+    const recentMatches = await this.scheduleRepository
+      .createQueryBuilder('schedule')
+      .where(
+        '(schedule.homeTeamId = :teamId OR schedule.awayTeamId = :teamId) AND schedule.leagueId = :leagueId',
+        {
+          teamId,
+          leagueId,
+        },
+      )
+      .leftJoinAndSelect('schedule.league', 'league')
+      .leftJoinAndSelect('schedule.homeTeam', 'homeTeam')
+      .leftJoinAndSelect('schedule.awayTeam', 'awayTeam')
+      .select([
+        'schedule.id',
+        'schedule.date',
+        'schedule.startTime',
+        'schedule.venue',
+        'homeTeam',
+        'awayTeam',
+        'league',
+        'schedule.homeTeamScore',
+        'schedule.awayTeamScore',
+      ])
+      .orderBy('schedule.date', 'DESC')
+      .addOrderBy('schedule.startTime', 'DESC')
+      .limit(5)
+      .getMany();
+
+    const results = [];
+
+    for (const match of recentMatches) {
+      const isHomeTeam = match.homeTeam.id === teamId;
+      const isWin =
+        (isHomeTeam && match.homeTeamScore > match.awayTeamScore) ||
+        (!isHomeTeam && match.awayTeamScore > match.homeTeamScore);
+      const matchResult = {
+        result: isWin ? 'W' : 'L',
+        match: match,
+      };
+      results.push(matchResult);
+    }
+
+    return results;
   }
 }

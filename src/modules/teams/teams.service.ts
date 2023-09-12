@@ -76,4 +76,17 @@ export class TeamsService {
     }
     await this.teamsRepository.delete(id);
   }
+  async searchPlayers(keyword: string): Promise<Team[]> {
+    const sanitizedKeyword = keyword.replace(/\s{2,}/g, ' ').toLowerCase();
+    const queryBuilder = this.teamsRepository.createQueryBuilder('team');
+    queryBuilder.where(`LOWER(team.name) LIKE :keyword`, {
+      keyword: `%${sanitizedKeyword}%`,
+    });
+
+    queryBuilder
+      .orderBy(`CASE WHEN team.name LIKE :startsWith THEN 1 ELSE 2 END`, 'ASC')
+
+      .setParameters({ startsWith: `${sanitizedKeyword}%` });
+    return await queryBuilder.getMany();
+  }
 }

@@ -53,19 +53,7 @@ export class UserController {
     }
     return res.status(HttpStatus.OK).json(response);
   }
-
-  @Get(':id')
-  @ApiOkResponse({ status: 200, description: 'get user by id successfully' })
-  @ApiNotFoundResponse({ status: 404, description: 'get user by id failed' })
-  async findOne(@Param('id') id: string, @Res() res) {
-    const response = await this.usersService.findOne(id);
-    if (!response) {
-      throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
-    }
-    return res.status(HttpStatus.OK).json(response);
-  }
-
-  @Get('get-user/:my-user')
+  @Get('get-user')
   @ApiOkResponse({ status: 200, description: 'get my-user successfully' })
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @ApiForbiddenResponse({ status: 403, description: 'Forbidden' })
@@ -78,6 +66,17 @@ export class UserController {
     } else {
       return { message: 'User not found' };
     }
+  }
+
+  @Get(':id')
+  @ApiOkResponse({ status: 200, description: 'get user by id successfully' })
+  @ApiNotFoundResponse({ status: 404, description: 'get user by id failed' })
+  async findOne(@Param('id') id: string, @Res() res) {
+    const response = await this.usersService.findOne(id);
+    if (!response) {
+      throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
+    }
+    return res.status(HttpStatus.OK).json(response);
   }
 
   @Post()

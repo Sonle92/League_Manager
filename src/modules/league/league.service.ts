@@ -71,4 +71,20 @@ export class LeagueService {
     }
     return true;
   }
+  async searchPlayers(keyword: string): Promise<League[]> {
+    const sanitizedKeyword = keyword.replace(/\s{2,}/g, ' ').toLowerCase();
+    const queryBuilder = this.LeaguesRepository.createQueryBuilder('league');
+    queryBuilder.where(`LOWER(league.name) LIKE :keyword`, {
+      keyword: `%${sanitizedKeyword}%`,
+    });
+
+    queryBuilder
+      .orderBy(
+        `CASE WHEN league.name LIKE :startsWith THEN 1 ELSE 2 END`,
+        'ASC',
+      )
+
+      .setParameters({ startsWith: `${sanitizedKeyword}%` });
+    return await queryBuilder.getMany();
+  }
 }

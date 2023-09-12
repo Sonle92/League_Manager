@@ -52,4 +52,27 @@ export class PlayerService {
     }
     await this.PlayerRepository.delete(id);
   }
+  async searchPlayers(keyword: string): Promise<Player[]> {
+    const sanitizedKeyword = keyword.replace(/\s{2,}/g, ' ').toLowerCase();
+    const queryBuilder = this.PlayerRepository.createQueryBuilder('player');
+    queryBuilder
+      .where(`LOWER(player.playerName) LIKE :keyword`, {
+        keyword: `%${sanitizedKeyword}%`,
+      })
+      .orWhere(`LOWER(player.poisition) LIKE :keyword`, {
+        keyword: `%${sanitizedKeyword}%`,
+      });
+    queryBuilder
+      .orderBy(
+        `CASE WHEN player.playerName LIKE :startsWith THEN 1 ELSE 2 END`,
+        'ASC',
+      )
+      .addOrderBy(
+        `CASE WHEN player.poisition LIKE :startsWith THEN 1 ELSE 2 END`,
+        'ASC',
+      )
+
+      .setParameters({ startsWith: `${sanitizedKeyword}%` });
+    return await queryBuilder.getMany();
+  }
 }

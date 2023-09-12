@@ -22,6 +22,9 @@ export class Player {
   @Column()
   poisition: string;
 
+  @Column()
+  teamId: string;
+
   @ManyToOne(() => Team, (team) => team.player)
   team: Team;
 }

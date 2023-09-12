@@ -11,6 +11,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { TeamsService } from '../../teams.service';
 import { CreateTeamDto } from '../../dto/team.dto';
@@ -54,6 +55,10 @@ export class TeamsController {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
     return res.status(HttpStatus.OK).json(response);
+  }
+  @Get('search/key')
+  async sarch(@Query('keyword') keyword: string) {
+    return this.teamsService.searchPlayers(keyword);
   }
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {

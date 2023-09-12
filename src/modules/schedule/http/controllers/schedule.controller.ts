@@ -32,9 +32,7 @@ export class ScheduleController {
     @Res() res,
   ) {
     const response = await this.scheduleService.create(createScheduleDto);
-    const searchStanding = await this.scheduleService.UpdateStanding(
-      createScheduleDto,
-    );
+    await this.standingService.UpdateStanding(createScheduleDto);
     await this.standingService.updateRank(createScheduleDto.league.id);
     return res.status(HttpStatus.OK).json(response);
   }
@@ -48,6 +46,25 @@ export class ScheduleController {
       .status(HttpStatus.OK)
       .json({ message: 'Create Success!', response });
   }
+
+  @Get('get-date')
+  async getScheduleByDateAndTime(@Query('date') date: Date) {
+    const schedules = await this.scheduleService.getSchedulesByDateTime(date);
+    return schedules;
+  }
+  @Get('history-match')
+  async findMatchesByTeamId(@Query('teamId') teamId: string) {
+    const matches = await this.scheduleService.findHistorySchedule(teamId);
+    return matches;
+  }
+  // @Get('team-matches')
+  // async getMatchesByTeamInLeague(
+  //   @Query('teamId') teamId: string,
+  //   @Query('leagueId') leagueId: string,
+  // ): Promise<Schedule[]> {
+  //   return this.scheduleService.getMatchesByTeamInLeague(teamId, leagueId);
+  // }
+
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.scheduleService.findOne(id);
@@ -55,16 +72,6 @@ export class ScheduleController {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
     }
     return res.status(HttpStatus.OK).json(response);
-  }
-  @Get()
-  async getScheduleByDateAndTime(@Query('date') date: Date) {
-    const schedules = await this.scheduleService.getSchedulesByDateTime(date);
-    return schedules;
-  }
-  @Get('history-match/:teamId')
-  async findMatchesByTeamId(@Query('teamId') teamId: string) {
-    const matches = await this.scheduleService.findHistorySchedule(teamId);
-    return matches;
   }
   // @Put()
   // async updateStanding(@Body()homeTeamS){

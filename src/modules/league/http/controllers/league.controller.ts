@@ -11,6 +11,7 @@ import {
   HttpException,
   NotFoundException,
   Res,
+  Query,
 } from '@nestjs/common';
 
 import { ValidationPipe } from '@nestjs/common';
@@ -31,6 +32,10 @@ export class LeagueController {
     }
     // const addTeamToLeague = response;
     return res.status(HttpStatus.OK).json(response);
+  }
+  @Get('search/key')
+  async sarch(@Query('keyword') keyword: string) {
+    return this.LeagueService.searchPlayers(keyword);
   }
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {

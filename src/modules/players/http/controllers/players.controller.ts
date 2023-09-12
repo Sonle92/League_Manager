@@ -11,6 +11,7 @@ import {
   HttpException,
   NotFoundException,
   Res,
+  Query,
 } from '@nestjs/common';
 
 import { ValidationPipe } from '@nestjs/common';
@@ -31,13 +32,18 @@ export class PlayerController {
     }
     return res.status(HttpStatus.OK).json(response);
   }
-  @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res) {
+  @Get('playerId')
+  async findOne(@Query('id') id: string, @Res() res) {
     const response = await this.PlayerService.findOne(id);
     if (!response) {
       throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
     }
     return res.status(HttpStatus.OK).json(response);
+  }
+
+  @Get('search/key')
+  async sarch(@Query('keyword') keyword: string) {
+    return this.PlayerService.searchPlayers(keyword);
   }
 
   @Post()
