@@ -111,59 +111,6 @@ export class ScheduleService {
       ],
     });
   }
-  // async getMatchesByTeam(teamId: string, leagueId: string) {
-  //   const recentMatches = await this.scheduleRepository
-  //     .createQueryBuilder('schedule')
-  //     .where(
-  //       'schedule.homeTeamId = :teamId  AND schedule.leagueId = :leagueId',
-  //       {
-  //         teamId,
-  //         leagueId,
-  //       },
-  //     )
-  //     .leftJoinAndSelect('schedule.league', 'league')
-  //     .leftJoinAndSelect('schedule.homeTeam', 'homeTeam')
-  //     .leftJoinAndSelect('schedule.awayTeam', 'awayTeam')
-  //     .select([
-  //       'schedule.id',
-  //       'schedule.date',
-  //       'schedule.startTime',
-  //       'schedule.venue',
-  //       'homeTeam',
-  //       'awayTeam',
-  //       'league',
-  //       'schedule.homeTeamScore',
-  //       'schedule.awayTeamScore',
-  //     ])
-  //     .orderBy('schedule.date', 'DESC')
-  //     .addOrderBy('schedule.startTime', 'DESC')
-  //     .limit(5)
-  //     .getMany();
-
-  //   const results = [];
-
-  //   for (const match of recentMatches) {
-  //     const homeTeamScore = match.homeTeamScore;
-  //     const awayTeamScore = match.awayTeamScore;
-  //     const result = (() => {
-  //       if (homeTeamScore > awayTeamScore) {
-  //         return 'W';
-  //       } else if (homeTeamScore < awayTeamScore) {
-  //         return 'L';
-  //       } else {
-  //         return 'D';
-  //       }
-  //     })();
-  //     const matchResult = {
-  //       result: result as 'W' | 'L' | 'D',
-  //       match,
-  //     };
-
-  //     results.push(matchResult);
-  //   }
-
-  //   return results;
-  // }
 
   async getSchedulesForMultipleTeamsAndLeagues(standing: any, yard: string) {
     let conditions: any[];
@@ -217,7 +164,6 @@ export class ScheduleService {
       .limit(5)
       .getMany();
 
-    // const matchesByTeamId = {};
     const standingMatches = [];
     for (const item of standing) {
       const { teamId, leagueId } = item;
