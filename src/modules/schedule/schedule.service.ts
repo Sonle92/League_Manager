@@ -222,7 +222,10 @@ export class ScheduleService {
           console.error('Error calculating match result:', error);
         }
       }
-      const standing = await this.standingsService.findByTeam(teamId);
+      const standing = await this.standingsService.findByTeamAndLeague(
+        leagueId,
+        teamId,
+      );
       const standingData = { standing, matches };
       standingMatches.push(standingData);
     }

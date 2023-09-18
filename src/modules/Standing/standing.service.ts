@@ -155,6 +155,7 @@ export class StandingsService {
         standing,
         yard,
       );
+    console.log(schedule);
     for (const standing of getAllStanding) {
       const matchingResults = schedule.filter((schedules) => {
         if (yard === 'home') {
