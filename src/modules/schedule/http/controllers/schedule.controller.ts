@@ -19,6 +19,7 @@ import { CreateScheduleDto } from '../../dto/schedule.dto';
 import { Standing } from 'src/modules/Standing/entities/standing.entity';
 import { StandingsService } from 'src/modules/Standing/standing.service';
 import { Schedule } from '../../entities/schedule.entity';
+import { HistoryScheduleDto } from '../../dto/historySchedule.dto';
 @ApiTags('CRUD-schedule')
 @Controller('schedule')
 export class ScheduleController {
@@ -53,17 +54,13 @@ export class ScheduleController {
     return schedules;
   }
   @Get('history-match')
-  async findMatchesByTeamId(@Query('teamId') teamId: string) {
+  async findMatchesByTeamId(
+    @Query(new ValidationPipe()) historyScheduleDto: HistoryScheduleDto,
+  ) {
+    const teamId = historyScheduleDto.teamId;
     const matches = await this.scheduleService.findHistorySchedule(teamId);
     return matches;
   }
-  // @Get('team-matches')
-  // async getMatchesByTeamInLeague(
-  //   @Query('teamId') teamId: string,
-  //   @Query('leagueId') leagueId: string,
-  // ): Promise<Schedule[]> {
-  //   return this.scheduleService.getMatchesByTeamInLeague(teamId, leagueId);
-  // }
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {

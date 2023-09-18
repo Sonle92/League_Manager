@@ -3,6 +3,7 @@ import {
   NestModule,
   MiddlewareConsumer,
   RequestMethod,
+  forwardRef,
 } from '@nestjs/common';
 
 import { TeamsModule } from './modules/teams/teams.module';
@@ -25,6 +26,11 @@ import { PlayerModule } from './modules/players/players.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { StandingModule } from './modules/Standing/standing.module';
 import { LeagueTeamModule } from './modules/leagueTeam/leagueTeam.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TeamsService } from './modules/teams/teams.service';
+import { LeagueService } from './modules/league/league.service';
+import { PlayerService } from './modules/players/players.service';
 
 @Module({
   imports: [
@@ -62,7 +68,12 @@ import { LeagueTeamModule } from './modules/leagueTeam/leagueTeam.module';
     StandingModule,
     LeagueTeamModule,
     ConfigModule.forRoot(),
+    forwardRef(() => LeagueModule),
+    forwardRef(() => TeamsModule),
+    forwardRef(() => PlayerModule),
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

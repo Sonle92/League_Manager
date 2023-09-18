@@ -15,7 +15,7 @@ import { TeamRepository } from './repositories/teams.repository';
 import { LeagueTeamRepository } from '../leagueTeam/repositories/leagueTeam.repository';
 import { Standing } from '../Standing/entities/standing.entity';
 import { StandingRepository } from '../Standing/repositories/standing.repository';
-import { CreateStandingDto } from '../Standing/dto/create-standing.dto';
+import { CreateStandingDto } from '../Standing/dto/standing.dto';
 import { CreateLeagueTeamDto } from '../leagueTeam/dto/leagueTeam.dto';
 
 @Injectable()
@@ -25,8 +25,6 @@ export class TeamsService {
     private teamsRepository: TeamRepository,
     @InjectRepository(LeagueTeam)
     private leagueTeamRepository: LeagueTeamRepository,
-    @InjectRepository(Standing)
-    private standingRepository: StandingRepository,
   ) {}
 
   findAll(): Promise<Team[]> {
@@ -48,15 +46,7 @@ export class TeamsService {
       throw error;
     }
   }
-  async addStanding(standing: CreateStandingDto): Promise<any> {
-    try {
-      const response = await this.standingRepository.save(standing);
-      return response;
-    } catch (error) {
-      console.error('error', error);
-      throw error;
-    }
-  }
+
   async checkTeamNameExists(name: string): Promise<boolean> {
     const existingLeague = await this.teamsRepository.findOne({
       where: { name },
@@ -76,9 +66,12 @@ export class TeamsService {
     }
     await this.teamsRepository.delete(id);
   }
-  async searchPlayers(keyword: string): Promise<Team[]> {
+  async searchTeam(keyword: string): Promise<Team[]> {
     const sanitizedKeyword = keyword.replace(/\s{2,}/g, ' ').toLowerCase();
-    const queryBuilder = this.teamsRepository.createQueryBuilder('team');
+    const queryBuilder = this.teamsRepository
+      .createQueryBuilder('team')
+      .leftJoinAndSelect('team.player', 'player')
+      .leftJoinAndSelect('team.league', 'league');
     queryBuilder.where(`LOWER(team.name) LIKE :keyword`, {
       keyword: `%${sanitizedKeyword}%`,
     });

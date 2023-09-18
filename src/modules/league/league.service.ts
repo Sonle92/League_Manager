@@ -71,7 +71,7 @@ export class LeagueService {
     }
     return true;
   }
-  async searchPlayers(keyword: string): Promise<League[]> {
+  async searchLeague(keyword: string): Promise<League[]> {
     const sanitizedKeyword = keyword.replace(/\s{2,}/g, ' ').toLowerCase();
     const queryBuilder = this.LeaguesRepository.createQueryBuilder('league');
     queryBuilder.where(`LOWER(league.name) LIKE :keyword`, {

@@ -8,5 +8,6 @@ import { LeagueService } from './league.service';
   imports: [TypeOrmModule.forFeature([League])],
   controllers: [LeagueController],
   providers: [LeagueService],
+  exports: [LeagueService],
 })
 export class LeagueModule {}

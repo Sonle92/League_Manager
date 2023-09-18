@@ -7,6 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Team } from '../../teams/entities/teams.entity';
+import { Statitics } from 'src/modules/statistics/entities/statistics.entity';
 
 @Entity()
 export class Player {
@@ -27,4 +28,7 @@ export class Player {
 
   @ManyToOne(() => Team, (team) => team.player)
   team: Team;
+
+  @OneToMany(() => Statitics, (statistics) => statistics.player)
+  statistics: Statitics[];
 }

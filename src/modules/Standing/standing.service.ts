@@ -8,11 +8,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Standing } from './entities/standing.entity';
 import { Repository } from 'typeorm';
-import { CreateStandingDto } from './dto/create-standing.dto';
+import { CreateStandingDto } from './dto/standing.dto';
 import { StandingRepository } from './repositories/standing.repository';
 import { UpdateStandingDto } from './dto/updateStanding.dto';
 import { CreateScheduleDto } from '../schedule/dto/schedule.dto';
 import { ScheduleService } from '../schedule/schedule.service';
+import { match } from 'assert';
 
 @Injectable()
 export class StandingsService {
@@ -29,11 +30,27 @@ export class StandingsService {
   findOne(id: string): Promise<Standing | null> {
     return this.standingRepository.findOne({ where: { id } });
   }
+  findByTeam(teamId: string): Promise<Standing | null> {
+    return this.standingRepository.findOne({ where: { teamId } });
+  }
+  findByLeague(leagueId: string): Promise<Standing[] | null> {
+    return this.standingRepository.find({ where: { leagueId: leagueId } });
+  }
   create(createstandingdto: CreateStandingDto): Promise<Standing> {
     return this.standingRepository.save(createstandingdto);
   }
   async getStandingsByLeagueId(leagueId: string): Promise<Standing[]> {
     return this.standingRepository.find({ where: { leagueId } });
+  }
+
+  async addStanding(standing: CreateStandingDto): Promise<any> {
+    try {
+      const response = await this.standingRepository.save(standing);
+      return response;
+    } catch (error) {
+      console.error('error', error);
+      throw error;
+    }
   }
 
   //new
@@ -115,5 +132,40 @@ export class StandingsService {
       standing.rank = index + 1;
       await this.standingRepository.save(standing);
     });
+  }
+
+  async getMatchesByTeamInLeague(yard: any, leagueId: string) {
+    const standingsWithMatches = [];
+    const getAllStanding = await this.findByLeague(leagueId);
+    const standing = getAllStanding.map((obj) => ({
+      teamId: obj.teamId,
+      leagueId: obj.leagueId,
+    }));
+    const schedule =
+      await this.scheduleService.getSchedulesForMultipleTeamsAndLeagues(
+        standing,
+        yard,
+      );
+    for (const standing of getAllStanding) {
+      const matchingResults = schedule.filter((schedules) => {
+        if (yard === 'home') {
+          return schedules.match.homeTeamId === standing.teamId;
+        } else if (yard === 'away') {
+          return schedules.match.awayTeamId === standing.teamId;
+        }
+        return false;
+      });
+      if (matchingResults) {
+        standingsWithMatches.push({
+          standing: standing,
+          matches: matchingResults,
+        });
+      }
+    }
+    if (yard === 'home' || yard === 'away') {
+      return standingsWithMatches;
+    } else if (yard === 'all') {
+      return schedule;
+    }
   }
 }

@@ -14,12 +14,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { StandingsService } from '../../standing.service';
-import { CreateStandingDto } from '../../dto/create-standing.dto';
+import { CreateStandingDto } from '../../dto/standing.dto';
 import { ApiTags } from '@nestjs/swagger';
 import dataSource from 'db/data-source';
 import { LeagueTeam } from '../../../leagueTeam/entities/leagueTeam.entity';
 import { Standing } from '../../entities/standing.entity';
 import { ScheduleService } from 'src/modules/schedule/schedule.service';
+import { HistoryMatch } from '../../dto/historyMatch.dto';
 
 @ApiTags('CRUD-standing')
 @Controller('standing')
@@ -45,12 +46,14 @@ export class StandingController {
     return res.status(HttpStatus.OK).json(response);
   }
 
-  @Get('team-matches')
+  @Get('standing-matches')
   async getMatchesByTeamInLeague(
-    @Query('teamId') teamId: string,
-    @Query('leagueId') leagueId: string,
-  ): Promise<Standing[]> {
-    return this.scheduleService.getMatchesByTeamInLeague(teamId, leagueId);
+    @Query(new ValidationPipe()) historyMatch: HistoryMatch,
+  ) {
+    const yard = historyMatch.yard;
+    const leagueId = historyMatch.leagueId;
+
+    return this.standingService.getMatchesByTeamInLeague(yard, leagueId);
   }
 
   @Get(':id')

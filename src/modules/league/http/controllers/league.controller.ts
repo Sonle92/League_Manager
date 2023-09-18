@@ -35,7 +35,7 @@ export class LeagueController {
   }
   @Get('search/key')
   async sarch(@Query('keyword') keyword: string) {
-    return this.LeagueService.searchPlayers(keyword);
+    return this.LeagueService.searchLeague(keyword);
   }
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {

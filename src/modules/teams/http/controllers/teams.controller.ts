@@ -19,11 +19,16 @@ import { ApiTags } from '@nestjs/swagger';
 import dataSource from 'db/data-source';
 import { LeagueTeam } from '../../../leagueTeam/entities/leagueTeam.entity';
 import { Standing } from 'src/modules/Standing/entities/standing.entity';
+import { StandingsService } from 'src/modules/Standing/standing.service';
+import { CreateLeagueTeamDto } from 'src/modules/leagueTeam/dto/leagueTeam.dto';
 
 @ApiTags('CRUD-Teams')
 @Controller('teams')
 export class TeamsController {
-  constructor(private teamsService: TeamsService) {}
+  constructor(
+    private teamsService: TeamsService,
+    private standingService: StandingsService,
+  ) {}
 
   @Post()
   async create(@Body(new ValidationPipe()) createTeamDto: CreateTeamDto) {
@@ -36,16 +41,18 @@ export class TeamsController {
     const standing = new Standing();
     standing.teamId = createTeamDto.id;
     standing.leagueId = createTeamDto.leagueId.id;
-    await this.teamsService.addStanding(standing);
+    await this.standingService.addStanding(standing);
     return { message: 'Successful new creation!', response };
   }
   @Post('addLeagueToTeam')
-  async addLeagueToTeam(@Body(new ValidationPipe()) leagueTeam: LeagueTeam) {
+  async addLeagueToTeam(
+    @Body(new ValidationPipe()) leagueTeam: CreateLeagueTeamDto,
+  ) {
     const response = await this.teamsService.addLeagueToTeam(leagueTeam);
     const standing = new Standing();
     standing.teamId = leagueTeam.teamId;
     standing.leagueId = leagueTeam.leagueId;
-    await this.teamsService.addStanding(standing);
+    await this.standingService.addStanding(standing);
     return { message: 'Add new league to team successfully', response };
   }
   @Get()
@@ -58,7 +65,7 @@ export class TeamsController {
   }
   @Get('search/key')
   async sarch(@Query('keyword') keyword: string) {
-    return this.teamsService.searchPlayers(keyword);
+    return this.teamsService.searchTeam(keyword);
   }
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {

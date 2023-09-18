@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Team } from '../../teams/entities/teams.entity';
 import { League } from '../../league/entities/league.entity';
+import { Statitics } from 'src/modules/statistics/entities/statistics.entity';
 
 @Entity()
 export class Schedule {
@@ -47,4 +48,7 @@ export class Schedule {
 
   @ManyToOne(() => League, (league) => league.shedule)
   league: League;
+
+  @OneToMany(() => Statitics, (statistics) => statistics.schedule)
+  statistics: Statitics[];
 }
