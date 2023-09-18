@@ -37,6 +37,7 @@ export class StandingController {
     const response = await this.standingService.create(createStandingDto);
     return { message: 'Successful new creation!', response };
   }
+
   @Get()
   async findAll(@Res() res, @Req() req) {
     const response = await this.standingService.findAll();

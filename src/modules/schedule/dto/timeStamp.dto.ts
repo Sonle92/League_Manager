@@ -17,14 +17,13 @@ class LeagueDto {
   @IsNotEmpty()
   id: string;
 }
-export class CreateScheduleDto {
+export class TimeStamp {
   @ApiProperty()
   id: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsDateString()
-  date: Date;
+  date: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -49,11 +48,11 @@ export class CreateScheduleDto {
   awayTeam: TeamDto;
 
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   homeTeamScore: number;
 
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   awayTeamScore: number;
 
   @ApiProperty()

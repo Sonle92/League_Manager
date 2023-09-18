@@ -20,6 +20,7 @@ import { Standing } from '../Standing/entities/standing.entity';
 import { StandingRepository } from '../Standing/repositories/standing.repository';
 import { CreateStandingDto } from '../Standing/dto/standing.dto';
 import { StandingsService } from '../Standing/standing.service';
+import { TimeStamp } from './dto/timeStamp.dto';
 
 @Injectable()
 export class ScheduleService {
@@ -29,9 +30,6 @@ export class ScheduleService {
     @Inject(forwardRef(() => StandingsService))
     private standingsService: StandingsService,
   ) {}
-  // private standingsService: StandingsService,
-  // @Inject(forwardRef(() => StandingsService))
-  // private standingsService: StandingsService,
 
   findAll(): Promise<Schedule[]> {
     return this.scheduleRepository.find({
@@ -49,8 +47,12 @@ export class ScheduleService {
       ],
     });
   }
-  findOne(id: string): Promise<Schedule | null> {
-    return this.scheduleRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<Schedule | null> {
+    const schedule = await this.scheduleRepository.findOne({
+      where: { id },
+      relations: ['league', 'homeTeam', 'awayTeam'],
+    });
+    return schedule || null;
   }
   async findById(teamId: string, result: string) {
     try {
@@ -94,6 +96,23 @@ export class ScheduleService {
       },
     });
   }
+
+  async updateScore(
+    id: string,
+    homeTeamScore: number,
+    awayTeamScore: number,
+  ): Promise<Schedule | null> {
+    const schedule = await this.scheduleRepository.findOne({ where: { id } });
+    if (!schedule) {
+      return null;
+    }
+    schedule.homeTeamScore = homeTeamScore;
+    schedule.awayTeamScore = awayTeamScore;
+    await this.scheduleRepository.save(schedule);
+
+    return schedule;
+  }
+
   async findHistorySchedule(teamId: string): Promise<Schedule[]> {
     return await this.scheduleRepository.find({
       where: [{ homeTeamId: teamId }, { awayTeamId: teamId }],

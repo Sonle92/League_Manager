@@ -74,6 +74,7 @@ import { PlayerService } from './modules/players/players.service';
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

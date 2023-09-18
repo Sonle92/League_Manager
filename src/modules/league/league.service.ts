@@ -3,18 +3,23 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  forwardRef,
+  Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { League } from './entities/league.entity';
 import { CreateLeagueDto } from './dto/league.dto';
 import { LeagueRepository } from './repositories/league.repository';
+import { AppService } from 'src/app.service';
 
 @Injectable()
 export class LeagueService {
   constructor(
     @InjectRepository(League)
     private LeaguesRepository: LeagueRepository,
+    @Inject(forwardRef(() => AppService))
+    private appService: AppService,
   ) {}
 
   findAll(): Promise<League[]> {
@@ -86,5 +91,19 @@ export class LeagueService {
 
       .setParameters({ startsWith: `${sanitizedKeyword}%` });
     return await queryBuilder.getMany();
+  }
+
+  async findLeagueByTimestamp(timestamp: number): Promise<League[]> {
+    const targetDate = new Date(timestamp * 1000);
+    const leagues = await this.LeaguesRepository.createQueryBuilder('league')
+      .where(
+        ':targetDate >= league.startDate AND :targetDate <= league.endDate',
+        {
+          targetDate,
+        },
+      )
+      .getMany();
+
+    return leagues;
   }
 }

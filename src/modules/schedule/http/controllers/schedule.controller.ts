@@ -20,6 +20,8 @@ import { Standing } from 'src/modules/Standing/entities/standing.entity';
 import { StandingsService } from 'src/modules/Standing/standing.service';
 import { Schedule } from '../../entities/schedule.entity';
 import { HistoryScheduleDto } from '../../dto/historySchedule.dto';
+import { TimeStamp } from '../../dto/timeStamp.dto';
+import { UpdateStandingDto } from 'src/modules/Standing/dto/updateStanding.dto';
 @ApiTags('CRUD-schedule')
 @Controller('schedule')
 export class ScheduleController {
@@ -33,10 +35,25 @@ export class ScheduleController {
     @Res() res,
   ) {
     const response = await this.scheduleService.create(createScheduleDto);
-    await this.standingService.UpdateStanding(createScheduleDto);
-    await this.standingService.updateRank(createScheduleDto.league.id);
     return res.status(HttpStatus.OK).json(response);
   }
+
+  @Post('UpdateSchedule')
+  async updateScore(
+    @Body(new ValidationPipe()) updateStandingDto: UpdateStandingDto,
+    @Res() res,
+  ) {
+    await this.scheduleService.updateScore(
+      updateStandingDto.id,
+      updateStandingDto.homeTeamScore,
+      updateStandingDto.awayTeamScore,
+    );
+    const standingId = await this.scheduleService.findOne(updateStandingDto.id);
+    await this.standingService.UpdateStanding(standingId);
+    await this.standingService.updateRank(standingId.leagueId);
+    return res.status(HttpStatus.OK).json(standingId);
+  }
+
   @Get('all')
   async findAll(@Res() res, @Req() req) {
     const response = await this.scheduleService.findAll();
@@ -70,8 +87,15 @@ export class ScheduleController {
     }
     return res.status(HttpStatus.OK).json(response);
   }
-  // @Put()
-  // async updateStanding(@Body()homeTeamS){
-
+  // @Post('time')
+  // async testTimeStamp(
+  //   @Body(new ValidationPipe()) createScheduleDto: TimeStamp,
+  //   @Res() res,
+  // ) {
+  //   const response = await this.scheduleService.timestampToDateString(
+  //     createScheduleDto.date,
+  //   );
+  //   console.log(createScheduleDto);
+  //   return res.status(HttpStatus.OK).json(response);
   // }
 }

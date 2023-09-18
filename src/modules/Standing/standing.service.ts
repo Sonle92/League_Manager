@@ -36,6 +36,14 @@ export class StandingsService {
   findByLeague(leagueId: string): Promise<Standing[] | null> {
     return this.standingRepository.find({ where: { leagueId: leagueId } });
   }
+  findByTeamAndLeague(
+    leagueId: string,
+    teamId: string,
+  ): Promise<Standing[] | null> {
+    return this.standingRepository.find({
+      where: { leagueId: leagueId, teamId: teamId },
+    });
+  }
   create(createstandingdto: CreateStandingDto): Promise<Standing> {
     return this.standingRepository.save(createstandingdto);
   }
@@ -55,6 +63,7 @@ export class StandingsService {
 
   //new
   async UpdateStanding(createScheduleDto: CreateScheduleDto): Promise<any> {
+    console.log(createScheduleDto);
     const homeTeam = await this.standingRepository.findOne({
       where: {
         teamId: createScheduleDto.homeTeam.id,

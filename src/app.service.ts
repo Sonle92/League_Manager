@@ -27,4 +27,23 @@ export class AppService {
       leagues,
     };
   }
+
+  async timestampToDateString(timestamp: string) {
+    const num = Number(timestamp);
+    const date = new Date(num * 1000);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  }
+  async timestampToTimeString(timestamp: number) {
+    const date = new Date(timestamp * 1000);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const formattedTime = `${hours}:${minutes}`;
+    return formattedTime;
+  }
 }
