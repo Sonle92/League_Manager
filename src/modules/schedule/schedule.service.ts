@@ -131,134 +131,74 @@ export class ScheduleService {
     });
   }
 
-  async getSchedulesForMultipleTeamsAndLeagues(standing: any, yard: string) {
-    let conditions: any[];
-    const results = [];
-    if (yard === 'home') {
-      conditions = standing.map(({ teamId, leagueId }) => ({
-        homeTeamId: teamId,
-        leagueId: leagueId,
-      }));
-    } else if (yard === 'away') {
-      conditions = standing.map(({ teamId, leagueId }) => ({
-        awayTeamId: teamId,
-        leagueId: leagueId,
-      }));
-    } else if (yard === 'all') {
-      conditions = standing.flatMap(({ teamId, leagueId }) => [
-        {
-          homeTeamId: teamId,
-          leagueId: leagueId,
-        },
-        {
-          awayTeamId: teamId,
-          leagueId: leagueId,
-        },
-      ]);
-    } else {
-      throw new Error('Invalid value for yard');
-    }
-    const schedules = await this.scheduleRepository
-      .createQueryBuilder('schedule')
-      .where(conditions)
-      .leftJoinAndSelect('schedule.league', 'league')
-      .leftJoinAndSelect('schedule.homeTeam', 'homeTeam')
-      .leftJoinAndSelect('schedule.awayTeam', 'awayTeam')
-      .select([
-        'schedule.id',
-        'schedule.date',
-        'schedule.startTime',
-        'schedule.venue',
-        'schedule.homeTeamId',
-        'schedule.awayTeamId',
-        'schedule.leagueId',
-        'homeTeam',
-        'awayTeam',
-        'league',
-        'schedule.homeTeamScore',
-        'schedule.awayTeamScore',
-      ])
-      .orderBy('schedule.date', 'DESC')
-      .addOrderBy('schedule.startTime', 'DESC')
-      .limit(5)
-      .getMany();
-
-    const standingMatches = [];
-    for (const item of standing) {
-      const { teamId, leagueId } = item;
-      const matches = [];
-      for (const match of schedules) {
-        try {
-          let result;
-
-          if (teamId === match.homeTeamId && yard === 'home') {
-            result = await this.getMatchResult(match, match.homeTeamId);
-          } else if (teamId === match.awayTeamId && yard === 'away') {
-            result = await this.getMatchResult(match, match.awayTeamId);
-          } else if (yard === 'all') {
-            if (teamId === match.homeTeamId) {
-              result = await this.getMatchResult(match, match.homeTeamId);
-              const matchData = {
-                result: result,
-                match: match,
-              };
-              matches.push(matchData);
-            } else if (teamId === match.awayTeamId) {
-              result = await this.getMatchResult(match, match.awayTeamId);
-              const matchData = {
-                result: result,
-                match: match,
-              };
-              matches.push(matchData);
-            }
-          }
-          if (result) {
-            results.push({
-              result,
-              match,
-            });
-          }
-        } catch (error) {
-          console.error('Error calculating match result:', error);
-        }
-      }
-      const standing = await this.standingsService.findByTeamAndLeague(
-        leagueId,
-        teamId,
-      );
-      const standingData = { standing, matches };
-      standingMatches.push(standingData);
-    }
-    if (yard === 'home' || yard === 'away') {
-      return results;
-    } else if (yard === 'all') {
-      return standingMatches;
+  //code mới sửa
+  async findByTeamIdAndLeagueId(
+    leagueId: string,
+    teamId: string,
+    yard: string,
+  ): Promise<any> {
+    if (yard === 'Home') {
+      const match = await this.scheduleRepository.find({
+        where: { leagueId: leagueId, homeTeamId: teamId },
+      });
+      return await this.getMatchResult(match, teamId);
+    } else if (yard === 'Away') {
+      const match = await this.scheduleRepository.find({
+        where: { leagueId: leagueId, awayTeamId: teamId },
+      });
+      return await this.getMatchResult(match, teamId);
+    } else if (yard === 'All') {
+      const match = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .where('schedule.leagueId = :leagueId', { leagueId })
+        .andWhere(
+          '(schedule.homeTeamId = :teamId OR schedule.awayTeamId = :teamId)',
+          { teamId },
+        )
+        .getMany();
+      return await this.getMatchResult(match, teamId);
     }
   }
-  async getMatchResult(match: any, teamId: string) {
-    const homeTeamId = match.homeTeam.id;
-    const awayTeamId = match.awayTeam.id;
-    const homeTeamScore = match.homeTeamScore;
-    const awayTeamScore = match.awayTeamScore;
 
-    if (teamId === awayTeamId) {
-      if (awayTeamScore > homeTeamScore) {
-        return 'W';
-      } else if (homeTeamScore > awayTeamScore) {
-        return 'L';
-      } else {
-        return 'D';
+  async getMatchResult(match: any, teamId: string) {
+    const results = [];
+
+    for (const a of match) {
+      let result = '';
+      if (teamId === a.awayTeamId) {
+        if (a.awayTeamScore > a.homeTeamScore) {
+          result = 'W';
+        } else if (a.homeTeamScore > a.awayTeamScore) {
+          result = 'L';
+        } else {
+          result = 'D';
+        }
+      } else if (teamId === a.homeTeamId) {
+        if (a.awayTeamScore < a.homeTeamScore) {
+          result = 'W';
+        } else if (a.awayTeamScore > a.homeTeamScore) {
+          result = 'L';
+        } else {
+          result = 'D';
+        }
       }
-    } else if (teamId === homeTeamId) {
-      if (awayTeamScore < homeTeamScore) {
-        return 'W';
-      } else if (awayTeamScore > homeTeamScore) {
-        return 'L';
-      } else {
-        return 'D';
-      }
-    } else {
-      return '';
+      const matchResult = {
+        result: result,
+        match: {
+          id: a.id,
+          date: a.date,
+          startTime: a.startTime,
+          venue: a.venue,
+          homeTeamId: a.homeTeamId,
+          awayTeamId: a.awayTeamId,
+          leagueId: a.leagueId,
+          homeTeamScore: a.homeTeamScore,
+          awayTeamScore: a.awayTeamScore,
+        },
+      };
+      results.push(matchResult);
     }
+
+    return results;
   }
 }

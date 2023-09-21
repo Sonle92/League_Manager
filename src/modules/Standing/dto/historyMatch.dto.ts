@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { StandingYard } from '../enums/standing.enum';
 
 export class HistoryMatch {
   @ApiProperty()
@@ -7,8 +8,8 @@ export class HistoryMatch {
   @IsString()
   leagueId: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: StandingYard, default: StandingYard.All })
   @IsNotEmpty()
   @IsString()
-  yard: string;
+  yard: StandingYard;
 }

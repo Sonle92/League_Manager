@@ -144,38 +144,32 @@ export class StandingsService {
   }
 
   async getMatchesByTeamInLeague(yard: any, leagueId: string) {
-    const standingsWithMatches = [];
-    const getAllStanding = await this.findByLeague(leagueId);
-    const standing = getAllStanding.map((obj) => ({
-      teamId: obj.teamId,
-      leagueId: obj.leagueId,
-    }));
-    const schedule =
-      await this.scheduleService.getSchedulesForMultipleTeamsAndLeagues(
-        standing,
+    const getStandingAndSchedule = await this.findByLeagueandSchedule(
+      leagueId,
+      yard,
+    );
+    return getStandingAndSchedule;
+  }
+
+  //code mới sửa
+  async findByLeagueandSchedule(
+    leagueId: string,
+    yard: string,
+  ): Promise<Standing[] | null> {
+    const matches = [];
+    const standing = await this.standingRepository.find({
+      where: { leagueId: leagueId },
+    });
+
+    for (const match of standing) {
+      const schedule = await this.scheduleService.findByTeamIdAndLeagueId(
+        match.leagueId,
+        match.teamId,
         yard,
       );
-    console.log(schedule);
-    for (const standing of getAllStanding) {
-      const matchingResults = schedule.filter((schedules) => {
-        if (yard === 'home') {
-          return schedules.match.homeTeamId === standing.teamId;
-        } else if (yard === 'away') {
-          return schedules.match.awayTeamId === standing.teamId;
-        }
-        return false;
-      });
-      if (matchingResults) {
-        standingsWithMatches.push({
-          standing: standing,
-          matches: matchingResults,
-        });
-      }
+      matches.push({ standings: match, schedule });
     }
-    if (yard === 'home' || yard === 'away') {
-      return standingsWithMatches;
-    } else if (yard === 'all') {
-      return schedule;
-    }
+
+    return matches;
   }
 }
