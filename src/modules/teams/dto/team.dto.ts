@@ -5,7 +5,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { CreateLeagueDto } from 'src/modules/league/dto/league.dto';
 class LeagueDto {
   @ApiProperty()
@@ -13,7 +13,7 @@ class LeagueDto {
   id: string;
 }
 export class CreateTeamDto {
-  @ApiProperty()
+  @ApiHideProperty()
   id: string;
 
   @ApiProperty()
@@ -21,13 +21,10 @@ export class CreateTeamDto {
   @IsString()
   name: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  logo: string;
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  logo: Express.Multer.File;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => LeagueDto)
   @IsNotEmpty()
-  leagueId: LeagueDto;
+  leagueId: string;
 }

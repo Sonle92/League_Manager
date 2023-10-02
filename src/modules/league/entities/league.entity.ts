@@ -12,6 +12,7 @@ import { Team } from '../../teams/entities/teams.entity';
 import { Schedule } from '../../schedule/entities/schedule.entity';
 import { Standing } from '../../Standing/entities/standing.entity';
 import { LeagueTeam } from 'src/modules/leagueTeam/entities/leagueTeam.entity';
+import { TimestampTransformer } from 'src/modules/statistics/transformers/timestamp.transformer';
 
 @Entity()
 export class League {
@@ -24,11 +25,11 @@ export class League {
   @Column()
   sport: string;
 
-  @Column({ type: 'date' })
-  startDate: Date;
+  @Column({ type: 'timestamp', transformer: new TimestampTransformer() })
+  startDate: number;
 
-  @Column({ type: 'date' })
-  endDate: Date;
+  @Column({ type: 'timestamp', transformer: new TimestampTransformer() })
+  endDate: number;
 
   @ManyToMany(() => Team, (team) => team.league)
   @JoinTable({

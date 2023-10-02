@@ -25,7 +25,12 @@ export class StandingsService {
   ) {}
 
   findAll(): Promise<Standing[]> {
-    return this.standingRepository.find({ relations: ['league', 'team'] });
+    return this.standingRepository.find({
+      relations: ['league', 'team'],
+      order: {
+        rank: 'ASC',
+      },
+    });
   }
   findOne(id: string): Promise<Standing | null> {
     return this.standingRepository.findOne({ where: { id } });
@@ -63,17 +68,16 @@ export class StandingsService {
 
   //new
   async UpdateStanding(createScheduleDto: CreateScheduleDto): Promise<any> {
-    console.log(createScheduleDto);
     const homeTeam = await this.standingRepository.findOne({
       where: {
-        teamId: createScheduleDto.homeTeam.id,
-        leagueId: createScheduleDto.league.id,
+        teamId: createScheduleDto.homeTeamId,
+        leagueId: createScheduleDto.leagueId,
       },
     });
     const awayTeam = await this.standingRepository.findOne({
       where: {
-        teamId: createScheduleDto.awayTeam.id,
-        leagueId: createScheduleDto.league.id,
+        teamId: createScheduleDto.awayTeamId,
+        leagueId: createScheduleDto.leagueId,
       },
     });
     if (homeTeam && awayTeam) {
@@ -137,10 +141,10 @@ export class StandingsService {
       return b.points - a.points;
     });
 
-    standings.forEach(async (standing, index) => {
+    standings.forEach((standing, index) => {
       standing.rank = index + 1;
-      await this.standingRepository.save(standing);
     });
+    await this.standingRepository.save(standings);
   }
 
   async getMatchesByTeamInLeague(yard: any, leagueId: string) {
@@ -171,5 +175,55 @@ export class StandingsService {
     }
 
     return matches;
+  }
+
+  async checkBothTeamsBelongToLeague(
+    teamId1: string,
+    teamId2: string,
+    leagueId: string,
+  ): Promise<{ message: string; error?: string; notBelongingTeams: string[] }> {
+    try {
+      const team1ExistsInLeague = await this.standingRepository.findOne({
+        where: {
+          teamId: teamId1,
+          leagueId,
+        },
+      });
+
+      const team2ExistsInLeague = await this.standingRepository.findOne({
+        where: {
+          teamId: teamId2,
+          leagueId,
+        },
+      });
+
+      const notBelongingTeams: string[] = [];
+
+      if (!team1ExistsInLeague) {
+        notBelongingTeams.push(teamId1);
+      }
+
+      if (!team2ExistsInLeague) {
+        notBelongingTeams.push(teamId2);
+      }
+
+      if (notBelongingTeams.length === 0) {
+        return {
+          message: 'Cả hai teamId đều thuộc leagueId.',
+          notBelongingTeams: [],
+        };
+      } else {
+        return {
+          message: 'Có teamId không thuộc leagueId.',
+          notBelongingTeams,
+        };
+      }
+    } catch (error) {
+      return {
+        message: 'Đã xảy ra lỗi khi kiểm tra.',
+        notBelongingTeams: [],
+        error: error.message,
+      };
+    }
   }
 }

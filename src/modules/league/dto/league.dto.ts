@@ -3,12 +3,13 @@ import {
   IsNotEmpty,
   IsDateString,
   ValidateNested,
+  IsNumber,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class CreateLeagueDto {
-  @ApiProperty()
+  @ApiHideProperty()
   id: string;
 
   @ApiProperty()
@@ -23,13 +24,11 @@ export class CreateLeagueDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  // @IsDateString()
-  startDate: string;
-  // startDate: number;
+  @IsNumber()
+  startDate: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  // @IsDateString()
-  endDate: string;
-  // endDate: number;
+  @IsNumber()
+  endDate: number;
 }

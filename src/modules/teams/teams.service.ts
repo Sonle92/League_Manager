@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './entities/teams.entity';
@@ -17,6 +18,8 @@ import { Standing } from '../Standing/entities/standing.entity';
 import { StandingRepository } from '../Standing/repositories/standing.repository';
 import { CreateStandingDto } from '../Standing/dto/standing.dto';
 import { CreateLeagueTeamDto } from '../leagueTeam/dto/leagueTeam.dto';
+import { FilesAzureService } from '../upload/upload.service';
+import { League } from '../league/entities/league.entity';
 
 @Injectable()
 export class TeamsService {
@@ -25,6 +28,8 @@ export class TeamsService {
     private teamsRepository: TeamRepository,
     @InjectRepository(LeagueTeam)
     private leagueTeamRepository: LeagueTeamRepository,
+    @Inject(forwardRef(() => FilesAzureService))
+    private scheduleService: FilesAzureService,
   ) {}
 
   findAll(): Promise<Team[]> {
@@ -33,9 +38,9 @@ export class TeamsService {
   findOne(id: string): Promise<Team | null> {
     return this.teamsRepository.findOne({ where: { id } });
   }
-  create(createteamdto: CreateTeamDto): Promise<Team> {
-    return this.teamsRepository.save(createteamdto);
-  }
+  // async create(createteamdto: CreateTeamDto): Promise<Team> {
+  //   return this.teamsRepository.save(createteamdto);
+  // }
 
   async addLeagueToTeam(leagueTeam: CreateLeagueTeamDto): Promise<any> {
     try {
@@ -81,5 +86,16 @@ export class TeamsService {
 
       .setParameters({ startsWith: `${sanitizedKeyword}%` });
     return await queryBuilder.getMany();
+  }
+
+  async saveUrl(file_url: string, createTeamDto: CreateTeamDto): Promise<any> {
+    const league = new League();
+    league.id = createTeamDto.leagueId;
+    const team = new Team();
+    team.league = [league];
+    team.name = createTeamDto.name;
+    team.logo = file_url;
+    const result = await this.teamsRepository.save(team);
+    return result;
   }
 }

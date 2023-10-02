@@ -67,7 +67,7 @@ export class PlayerController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() createplayerdto: CreatePlayerDto,
+    @Body(new ValidationPipe()) createplayerdto: CreatePlayerDto,
     @Res() res,
   ): Promise<Player> {
     const result = await this.PlayerService.update(id, createplayerdto);

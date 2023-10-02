@@ -7,13 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
-import {
-  Brackets,
-  In,
-  Repository,
-  SelectQueryBuilder,
-  getRepository,
-} from 'typeorm';
+import { Brackets, In, Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateScheduleDto } from './dto/schedule.dto';
 import { ScheduleRepository } from './repositories/schedule.repository';
 import { Standing } from '../Standing/entities/standing.entity';
@@ -21,6 +15,7 @@ import { StandingRepository } from '../Standing/repositories/standing.repository
 import { CreateStandingDto } from '../Standing/dto/standing.dto';
 import { StandingsService } from '../Standing/standing.service';
 import { TimeStamp } from './dto/timeStamp.dto';
+import { StandingYard } from '../Standing/enums/standing.enum';
 
 @Injectable()
 export class ScheduleService {
@@ -36,8 +31,7 @@ export class ScheduleService {
       relations: ['league', 'awayTeam', 'homeTeam'],
       select: [
         'id',
-        'date',
-        'startTime',
+        'dateTime',
         'venue',
         'homeTeamScore',
         'awayTeamScore',
@@ -86,15 +80,16 @@ export class ScheduleService {
       throw new Error(`Could not find schedule for teamId: ${teamId}`);
     }
   }
-  create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
+  async create(createScheduleDto: CreateScheduleDto): Promise<Schedule> {
     return this.scheduleRepository.save(createScheduleDto);
   }
-  async getSchedulesByDateTime(date: Date): Promise<Schedule[]> {
-    return this.scheduleRepository.find({
+  async getSchedulesByDateTime(date: number): Promise<Schedule[]> {
+    const response = await this.scheduleRepository.find({
       where: {
-        date,
+        dateTime: new Date(date * 1000),
       },
     });
+    return response;
   }
 
   async updateScore(
@@ -119,8 +114,7 @@ export class ScheduleService {
       relations: ['league', 'awayTeam', 'homeTeam'],
       select: [
         'id',
-        'date',
-        'startTime',
+        'dateTime',
         'venue',
         'homeTeamScore',
         'awayTeamScore',
@@ -137,17 +131,25 @@ export class ScheduleService {
     teamId: string,
     yard: string,
   ): Promise<any> {
-    if (yard === 'Home') {
-      const match = await this.scheduleRepository.find({
-        where: { leagueId: leagueId, homeTeamId: teamId },
-      });
+    if (yard === StandingYard.Home) {
+      const match = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .where('schedule.leagueId = :leagueId', { leagueId })
+        .andWhere('(schedule.homeTeamId = :teamId)', { teamId })
+        .orderBy('schedule.dateTime', 'ASC')
+        .limit(5)
+        .getMany();
       return await this.getMatchResult(match, teamId);
-    } else if (yard === 'Away') {
-      const match = await this.scheduleRepository.find({
-        where: { leagueId: leagueId, awayTeamId: teamId },
-      });
+    } else if (yard === StandingYard.Away) {
+      const match = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .where('schedule.leagueId = :leagueId', { leagueId })
+        .andWhere('(schedule.awayTeamId = :teamId)', { teamId })
+        .orderBy('schedule.dateTime', 'ASC')
+        .limit(5)
+        .getMany();
       return await this.getMatchResult(match, teamId);
-    } else if (yard === 'All') {
+    } else if (yard === StandingYard.All) {
       const match = await this.scheduleRepository
         .createQueryBuilder('schedule')
         .where('schedule.leagueId = :leagueId', { leagueId })
@@ -155,6 +157,8 @@ export class ScheduleService {
           '(schedule.homeTeamId = :teamId OR schedule.awayTeamId = :teamId)',
           { teamId },
         )
+        .orderBy('schedule.dateTime', 'ASC')
+        .limit(5)
         .getMany();
       return await this.getMatchResult(match, teamId);
     }
@@ -186,8 +190,7 @@ export class ScheduleService {
         result: result,
         match: {
           id: a.id,
-          date: a.date,
-          startTime: a.startTime,
+          dateTime: a.dateTime,
           venue: a.venue,
           homeTeamId: a.homeTeamId,
           awayTeamId: a.awayTeamId,

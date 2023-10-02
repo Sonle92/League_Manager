@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Player } from './entities/players.entity';
 import { CreatePlayerDto } from './dto/players.dto';
 import { PlayerRepository } from './repositories/players.repository';
+import { Team } from '../teams/entities/teams.entity';
 
 @Injectable()
 export class PlayerService {
@@ -20,7 +21,12 @@ export class PlayerService {
     return this.PlayerRepository.findOne({ where: { id } });
   }
   create(createplayerdto: CreatePlayerDto): Promise<Player> {
-    return this.PlayerRepository.save(createplayerdto);
+    const player = new Player();
+    player.playerName = createplayerdto.playerName;
+    player.teamId = createplayerdto.teamId;
+    player.age = createplayerdto.age;
+    player.poisition = createplayerdto.poisition;
+    return this.PlayerRepository.save(player);
   }
   async update(
     id: string,

@@ -2,34 +2,24 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-class TeamDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
-class LeagueDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
+import { Transform, Type } from 'class-transformer';
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger';
+
 export class CreateScheduleDto {
-  @ApiProperty()
+  @ApiHideProperty()
   id: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsDateString()
-  date: Date;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  startTime: string;
+  dateTime: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -37,28 +27,20 @@ export class CreateScheduleDto {
   venue: string;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => TeamDto)
   @IsNotEmpty()
-  homeTeam: TeamDto;
+  homeTeamId: string;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => TeamDto)
   @IsNotEmpty()
-  awayTeam: TeamDto;
+  awayTeamId: string;
 
-  @ApiProperty()
-  // @IsNotEmpty()
+  @ApiProperty({ default: null })
   homeTeamScore: number;
 
-  @ApiProperty()
-  // @IsNotEmpty()
+  @ApiProperty({ default: null })
   awayTeamScore: number;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => LeagueDto)
   @IsNotEmpty()
-  league: LeagueDto;
+  leagueId: string;
 }

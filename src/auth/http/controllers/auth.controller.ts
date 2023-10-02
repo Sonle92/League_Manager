@@ -39,7 +39,7 @@ export class AuthController {
   @Post('register')
   @UsePipes(ValidationPipe)
   async register(
-    @Body() registerUserDto: RegisterUserDto,
+    @Body(new ValidationPipe()) registerUserDto: RegisterUserDto,
     @Res() res,
   ): Promise<User> {
     console.log(registerUserDto);
@@ -60,7 +60,7 @@ export class AuthController {
   @Post('login')
   @UsePipes(ValidationPipe)
   async login(
-    @Body() loginUserDto: LoginUserDto,
+    @Body(new ValidationPipe()) loginUserDto: LoginUserDto,
     @Res() res: Response,
     @Req() req: Request,
   ): Promise<any> {
@@ -87,13 +87,13 @@ export class AuthController {
   }
 
   @Post('email')
-  async email(@Body() sendMmailDto: SendMailDto) {
+  async email(@Body(new ValidationPipe()) sendMmailDto: SendMailDto) {
     return await this.authService.sendWelcomeEmail(sendMmailDto.email);
   }
 
   @Put('forgot-password')
   @UsePipes(ValidationPipe)
-  async forgot(@Body() forgotDto: ForgotDto) {
+  async forgot(@Body(new ValidationPipe()) forgotDto: ForgotDto) {
     return await this.authService.ResetPassword(
       forgotDto.token,
       forgotDto.password,

@@ -9,18 +9,15 @@ import {
 } from 'typeorm';
 import { Team } from '../../teams/entities/teams.entity';
 import { League } from '../../league/entities/league.entity';
-import { Statitics } from 'src/modules/statistics/entities/statistics.entity';
+import { TimestampTransformer } from 'src/modules/statistics/transformers/timestamp.transformer';
 
 @Entity()
 export class Schedule {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({ type: 'date' })
-  date: Date;
-
-  @Column({ type: 'time' })
-  startTime: string;
+  @Column({ type: 'timestamp', transformer: new TimestampTransformer() })
+  dateTime: number;
 
   @Column()
   venue: string;
@@ -49,6 +46,6 @@ export class Schedule {
   @ManyToOne(() => League, (league) => league.shedule)
   league: League;
 
-  @OneToMany(() => Statitics, (statistics) => statistics.schedule)
-  statistics: Statitics[];
+  // @OneToMany(() => Statitics, (statistics) => statistics.schedule)
+  // statistics: Statitics[];
 }

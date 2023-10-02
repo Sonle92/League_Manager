@@ -31,6 +31,8 @@ import { AppService } from './app.service';
 import { TeamsService } from './modules/teams/teams.service';
 import { LeagueService } from './modules/league/league.service';
 import { PlayerService } from './modules/players/players.service';
+import { StatisticModule } from './modules/statistics/statistics.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -67,10 +69,13 @@ import { PlayerService } from './modules/players/players.service';
     AuthModule,
     StandingModule,
     LeagueTeamModule,
+    StatisticModule,
+    UploadModule,
     ConfigModule.forRoot(),
     forwardRef(() => LeagueModule),
     forwardRef(() => TeamsModule),
     forwardRef(() => PlayerModule),
+    // forwardRef(() => StatisticModule),
   ],
   controllers: [AppController],
   providers: [AppService],

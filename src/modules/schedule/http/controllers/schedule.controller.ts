@@ -62,11 +62,10 @@ export class ScheduleController {
     }
     return res
       .status(HttpStatus.OK)
-      .json({ message: 'Create Success!', response });
+      .json({ message: 'ALL SCHEDULE!', response });
   }
-
-  @Get('get-date')
-  async getScheduleByDateAndTime(@Query('date') date: Date) {
+  @Get('get-day')
+  async getScheduleByDateAndTime(@Query('date') date: number) {
     const schedules = await this.scheduleService.getSchedulesByDateTime(date);
     return schedules;
   }
@@ -87,15 +86,4 @@ export class ScheduleController {
     }
     return res.status(HttpStatus.OK).json(response);
   }
-  // @Post('time')
-  // async testTimeStamp(
-  //   @Body(new ValidationPipe()) createScheduleDto: TimeStamp,
-  //   @Res() res,
-  // ) {
-  //   const response = await this.scheduleService.timestampToDateString(
-  //     createScheduleDto.date,
-  //   );
-  //   console.log(createScheduleDto);
-  //   return res.status(HttpStatus.OK).json(response);
-  // }
 }

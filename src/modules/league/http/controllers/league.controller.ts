@@ -20,6 +20,7 @@ import { LeagueService } from '../../league.service';
 import { CreateLeagueDto } from '../../dto/league.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AppService } from 'src/app.service';
+import { TimestampToDate } from 'src/decorators/timeStamptoDate.decorator';
 
 @ApiTags('CRUD-Leagues')
 @Controller('leagues')
@@ -34,9 +35,9 @@ export class LeagueController {
     if (!response) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-    // const addTeamToLeague = response;
     return res.status(HttpStatus.OK).json(response);
   }
+
   @Get('search/key')
   async sarch(@Query('keyword') keyword: string) {
     return this.LeagueService.searchLeague(keyword);
@@ -51,7 +52,7 @@ export class LeagueController {
   }
 
   @Get('findByTimestamp/:timestamp')
-  async findLeagueByTimestamp(@Param('timestamp') timestamp: number) {
+  async findLeagueByTimestamp(@Query('timestamp') timestamp: number) {
     const leagues = await this.LeagueService.findLeagueByTimestamp(timestamp);
     if (!leagues || leagues.length === 0) {
       throw new NotFoundException('Not league for timestamp ');
@@ -65,12 +66,6 @@ export class LeagueController {
     @Res() res,
   ) {
     await this.LeagueService.checkIfLeagueNameExists(createleaguedto.name);
-    createleaguedto.startDate = await this.AppService.timestampToDateString(
-      createleaguedto.startDate,
-    );
-    createleaguedto.endDate = await this.AppService.timestampToDateString(
-      createleaguedto.endDate,
-    );
     const result = await this.LeagueService.create(createleaguedto);
     if (!result) {
       throw new HttpException(

@@ -12,15 +12,20 @@ import {
   HttpException,
   HttpStatus,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  Version,
 } from '@nestjs/common';
 import { TeamsService } from '../../teams.service';
 import { CreateTeamDto } from '../../dto/team.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import dataSource from 'db/data-source';
 import { LeagueTeam } from '../../../leagueTeam/entities/leagueTeam.entity';
 import { Standing } from 'src/modules/Standing/entities/standing.entity';
 import { StandingsService } from 'src/modules/Standing/standing.service';
 import { CreateLeagueTeamDto } from 'src/modules/leagueTeam/dto/leagueTeam.dto';
+import { FilesAzureService } from 'src/modules/upload/upload.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('CRUD-Teams')
 @Controller('teams')
@@ -28,19 +33,24 @@ export class TeamsController {
   constructor(
     private teamsService: TeamsService,
     private standingService: StandingsService,
+    private readonly fileService: FilesAzureService,
   ) {}
 
   @Post()
-  async create(@Body(new ValidationPipe()) createTeamDto: CreateTeamDto) {
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: CreateTeamDto })
+  @UseInterceptors(FileInterceptor('logo'))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body(new ValidationPipe()) createTeamDto: CreateTeamDto,
+  ) {
     await this.teamsService.checkTeamNameExists(createTeamDto.name);
-    const response = await this.teamsService.create(createTeamDto);
-    const leagueTeam = new LeagueTeam();
-    leagueTeam.leagueId = createTeamDto.leagueId.id;
-    leagueTeam.teamId = createTeamDto.id;
-    await this.teamsService.addLeagueToTeam(leagueTeam);
+    const containerName = 'demo1';
+    const upload = await this.fileService.uploadFile(file, containerName);
+    const response = await this.teamsService.saveUrl(upload, createTeamDto);
     const standing = new Standing();
-    standing.teamId = createTeamDto.id;
-    standing.leagueId = createTeamDto.leagueId.id;
+    standing.teamId = response.id;
+    standing.leagueId = createTeamDto.leagueId;
     await this.standingService.addStanding(standing);
     return { message: 'Successful new creation!', response };
   }
@@ -55,6 +65,21 @@ export class TeamsController {
     await this.standingService.addStanding(standing);
     return { message: 'Add new league to team successfully', response };
   }
+
+  // @Post('upload')
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({ type: UploadFileDto })
+  // @UseInterceptors(FileInterceptor('logo'))
+  // async upload(
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Body() uploadFileDto: UploadFileDto,
+  // ) {
+  //   const containerName = 'demo1';
+  //   const upload = await this.fileService.uploadFile(file, containerName);
+  //   this.teamsService.saveUrl(upload, uploadFileDto);
+  //   return { upload, message: 'uploaded successfully' };
+  // }
+
   @Get()
   async findAll(@Res() res, @Req() req) {
     const response = await this.teamsService.findAll();

@@ -9,12 +9,19 @@ import { Standing } from '../Standing/entities/standing.entity';
 import { StandingsService } from '../Standing/standing.service';
 import { ScheduleService } from '../schedule/schedule.service';
 import { StandingModule } from '../Standing/standing.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { UploadModule } from '../upload/upload.module';
+import multer from 'multer';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Team, LeagueTeam, Standing]),
     ConfigModule,
     forwardRef(() => StandingModule),
+    forwardRef(() => UploadModule),
+    // MulterModule.register({
+    //   dest: './uploads',
+    // }),
   ],
   controllers: [TeamsController],
   providers: [TeamsService],

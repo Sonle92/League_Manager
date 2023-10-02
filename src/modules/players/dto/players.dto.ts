@@ -5,14 +5,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
-class TeamDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 export class CreatePlayerDto {
-  @ApiProperty()
+  @ApiHideProperty()
   id: string;
 
   @ApiProperty()
@@ -31,8 +26,6 @@ export class CreatePlayerDto {
   poisition: string;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => TeamDto)
   @IsNotEmpty()
-  team: TeamDto;
+  teamId: string;
 }

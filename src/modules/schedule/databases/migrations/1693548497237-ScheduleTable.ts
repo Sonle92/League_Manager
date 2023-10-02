@@ -5,8 +5,7 @@ export class ScheduleTable1693548497237 extends BaseMigration {
   async run(queryRunner: QueryRunner) {
     await this.create('schedule', (table) => {
       table.primaryUuid('id');
-      table.date('date').nullable();
-      table.string('startTime').nullable();
+      table.timestamp('dateTime').nullable();
       table.string('venue').nullable();
       table.uuid('homeTeamId').nullable().foreign('team');
       table.uuid('awayTeamId').nullable().foreign('team');

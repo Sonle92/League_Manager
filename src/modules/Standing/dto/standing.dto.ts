@@ -6,16 +6,6 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-class LeagueDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
-class TeamDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  id: string;
-}
 export class CreateStandingDto {
   @ApiProperty()
   id: string;
@@ -66,14 +56,10 @@ export class CreateStandingDto {
   goalDifference: number;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => LeagueDto)
   @IsNotEmpty()
-  league: LeagueDto;
+  leagueId: string;
 
   @ApiProperty()
-  @ValidateNested()
-  @Type(() => TeamDto)
   @IsNotEmpty()
-  team: TeamDto;
+  teamId: string;
 }

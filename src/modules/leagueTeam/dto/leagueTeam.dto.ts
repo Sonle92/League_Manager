@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 
 export class CreateLeagueTeamDto {
-  @ApiProperty()
+  @ApiHideProperty()
   id: string;
 
   @ApiProperty()
