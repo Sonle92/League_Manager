@@ -18,7 +18,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { League } from '../../entities/league.entity';
 import { LeagueService } from '../../league.service';
 import { CreateLeagueDto } from '../../dto/league.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AppService } from 'src/app.service';
 import { TimestampToDate } from 'src/decorators/timeStamptoDate.decorator';
 
@@ -30,6 +30,7 @@ export class LeagueController {
     private AppService: AppService,
   ) {}
   @Get()
+  @ApiOperation({ summary: 'get all league' })
   async findAll(@Res() res) {
     const response = await this.LeagueService.findAll();
     if (!response) {
@@ -39,10 +40,12 @@ export class LeagueController {
   }
 
   @Get('search/key')
+  @ApiOperation({ summary: 'search by key' })
   async sarch(@Query('keyword') keyword: string) {
     return this.LeagueService.searchLeague(keyword);
   }
   @Get(':id')
+  @ApiOperation({ summary: 'get by league id' })
   async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.LeagueService.findOne(id);
     if (!response) {
@@ -52,6 +55,7 @@ export class LeagueController {
   }
 
   @Get('findByTimestamp/:timestamp')
+  @ApiOperation({ summary: 'get league over time' })
   async findLeagueByTimestamp(@Query('timestamp') timestamp: number) {
     const leagues = await this.LeagueService.findLeagueByTimestamp(timestamp);
     if (!leagues || leagues.length === 0) {
@@ -61,6 +65,7 @@ export class LeagueController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'create new league' })
   async create(
     @Body(new ValidationPipe()) createleaguedto: CreateLeagueDto,
     @Res() res,
@@ -80,6 +85,7 @@ export class LeagueController {
     return res.status(HttpStatus.CREATED).json(response);
   }
   @Put(':id')
+  @ApiOperation({ summary: 'update league by id' })
   async update(
     @Param('id') id: string,
     @Body() createleaguedto: CreateLeagueDto,
@@ -93,6 +99,7 @@ export class LeagueController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Delete(':id')
+  @ApiOperation({ summary: 'delete league by id' })
   async delete(@Param('id') id: string, @Res() res) {
     const result = await this.LeagueService.remove(id);
     const response = {

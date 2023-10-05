@@ -2,6 +2,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  Matches,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -13,6 +14,9 @@ export class CreatePlayerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  @Matches(/^[a-zA-Z0-9]+$/, {
+    message: 'The string cannot contain special characters',
+  })
   playerName: string;
 
   @ApiProperty()

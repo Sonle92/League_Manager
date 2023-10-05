@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { TeamsService } from '../../teams.service';
 import { CreateTeamDto } from '../../dto/team.dto';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import dataSource from 'db/data-source';
 import { LeagueTeam } from '../../../leagueTeam/entities/leagueTeam.entity';
 import { Standing } from 'src/modules/Standing/entities/standing.entity';
@@ -26,6 +26,7 @@ import { StandingsService } from 'src/modules/Standing/standing.service';
 import { CreateLeagueTeamDto } from 'src/modules/leagueTeam/dto/leagueTeam.dto';
 import { FilesAzureService } from 'src/modules/upload/upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CustomFileInterceptor } from '../../validators/uploadFile.validator';
 
 @ApiTags('CRUD-Teams')
 @Controller('teams')
@@ -37,9 +38,12 @@ export class TeamsController {
   ) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'create new team',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateTeamDto })
-  @UseInterceptors(FileInterceptor('logo'))
+  @UseInterceptors(FileInterceptor('logo'), CustomFileInterceptor)
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body(new ValidationPipe()) createTeamDto: CreateTeamDto,
@@ -55,6 +59,9 @@ export class TeamsController {
     return { message: 'Successful new creation!', response };
   }
   @Post('addLeagueToTeam')
+  @ApiOperation({
+    summary: 'add league to team',
+  })
   async addLeagueToTeam(
     @Body(new ValidationPipe()) leagueTeam: CreateLeagueTeamDto,
   ) {
@@ -80,7 +87,26 @@ export class TeamsController {
   //   return { upload, message: 'uploaded successfully' };
   // }
 
+  // @Put('uploadLogo')
+  // @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(FileInterceptor('logo'))
+  // @ApiBody({ type: UploadLogoTeam })
+  // async uploadLogoTeam(
+  //   @UploadedFile() file: Express.Multer.File,
+  //   @Query('id') id: string,
+  // ) {
+  //   const containerName = 'demo1';
+  //   const upload = await this.fileService.uploadFile(file, containerName);
+  //   console.log(upload);
+  //   this.teamsService.saveUrl(upload, id);
+
+  //   return { upload, message: 'uploaded successfully' };
+  // }
+
   @Get()
+  @ApiOperation({
+    summary: 'get all team',
+  })
   async findAll(@Res() res, @Req() req) {
     const response = await this.teamsService.findAll();
     if (!response) {
@@ -89,10 +115,16 @@ export class TeamsController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Get('search/key')
+  @ApiOperation({
+    summary: 'serach team by key',
+  })
   async sarch(@Query('keyword') keyword: string) {
     return this.teamsService.searchTeam(keyword);
   }
   @Get(':id')
+  @ApiOperation({
+    summary: 'get team by id',
+  })
   async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.teamsService.findOne(id);
     if (!response) {
@@ -101,6 +133,9 @@ export class TeamsController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Delete(':id')
+  @ApiOperation({
+    summary: 'delete team by id',
+  })
   async delete(@Param('id') id: string, @Res() res) {
     const result = await this.teamsService.remove(id);
     const response = {

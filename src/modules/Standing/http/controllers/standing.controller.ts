@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { StandingsService } from '../../standing.service';
 import { CreateStandingDto } from '../../dto/standing.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import dataSource from 'db/data-source';
 import { LeagueTeam } from '../../../leagueTeam/entities/leagueTeam.entity';
 import { Standing } from '../../entities/standing.entity';
@@ -31,6 +31,7 @@ export class StandingController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'create new standing' })
   async create(
     @Body(new ValidationPipe()) createStandingDto: CreateStandingDto,
   ) {
@@ -39,6 +40,7 @@ export class StandingController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'get all standing' })
   async findAll(@Res() res, @Req() req) {
     const response = await this.standingService.findAll();
     if (!response) {
@@ -48,6 +50,9 @@ export class StandingController {
   }
 
   @Get('standing-matches')
+  @ApiOperation({
+    summary: 'Results of the last 5 matches as the hometeam,awayteam,all',
+  })
   async getMatchesByTeamInLeague(
     @Query(new ValidationPipe()) historyMatch: HistoryMatch,
   ) {
@@ -58,6 +63,9 @@ export class StandingController {
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'get standing by id',
+  })
   async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.standingService.getStandingsByLeagueId(id);
     if (!response) {

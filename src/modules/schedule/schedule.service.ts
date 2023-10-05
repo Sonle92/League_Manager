@@ -7,7 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
-import { Brackets, In, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  Between,
+  Brackets,
+  In,
+  Like,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { CreateScheduleDto } from './dto/schedule.dto';
 import { ScheduleRepository } from './repositories/schedule.repository';
 import { Standing } from '../Standing/entities/standing.entity';
@@ -84,9 +91,17 @@ export class ScheduleService {
     return this.scheduleRepository.save(createScheduleDto);
   }
   async getSchedulesByDateTime(date: number): Promise<Schedule[]> {
+    const targetDate = new Date(date * 1000);
+    const formattedDate = `${targetDate.getFullYear()}-${(
+      targetDate.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, '0')}-${targetDate.getDate().toString().padStart(2, '0')}`;
+    const startDate = new Date(`${formattedDate} 00:00:00`);
+    const endDate = new Date(`${formattedDate} 23:59:59`);
     const response = await this.scheduleRepository.find({
       where: {
-        dateTime: new Date(date * 1000),
+        dateTime: Between(startDate, endDate),
       },
     });
     return response;

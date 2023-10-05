@@ -14,7 +14,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ScheduleService } from '../../schedule.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateScheduleDto } from '../../dto/schedule.dto';
 import { Standing } from 'src/modules/Standing/entities/standing.entity';
 import { StandingsService } from 'src/modules/Standing/standing.service';
@@ -30,6 +30,7 @@ export class ScheduleController {
     private standingService: StandingsService,
   ) {}
   @Post()
+  @ApiOperation({ summary: 'create new schedule' })
   async create(
     @Body(new ValidationPipe()) createScheduleDto: CreateScheduleDto,
     @Res() res,
@@ -39,6 +40,7 @@ export class ScheduleController {
   }
 
   @Post('UpdateSchedule')
+  @ApiOperation({ summary: 'update schedule score' })
   async updateScore(
     @Body(new ValidationPipe()) updateStandingDto: UpdateStandingDto,
     @Res() res,
@@ -55,6 +57,7 @@ export class ScheduleController {
   }
 
   @Get('all')
+  @ApiOperation({ summary: 'get all schedule' })
   async findAll(@Res() res, @Req() req) {
     const response = await this.scheduleService.findAll();
     if (!response) {
@@ -65,11 +68,13 @@ export class ScheduleController {
       .json({ message: 'ALL SCHEDULE!', response });
   }
   @Get('get-day')
+  @ApiOperation({ summary: 'get schedule by timestamp' })
   async getScheduleByDateAndTime(@Query('date') date: number) {
     const schedules = await this.scheduleService.getSchedulesByDateTime(date);
     return schedules;
   }
   @Get('history-match')
+  @ApiOperation({ summary: 'get hisroty schedule' })
   async findMatchesByTeamId(
     @Query(new ValidationPipe()) historyScheduleDto: HistoryScheduleDto,
   ) {
@@ -79,6 +84,7 @@ export class ScheduleController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'get schedule by id' })
   async findOne(@Param('id') id: string, @Res() res) {
     const response = await this.scheduleService.findOne(id);
     if (!response) {

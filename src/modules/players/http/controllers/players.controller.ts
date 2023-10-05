@@ -18,13 +18,16 @@ import { ValidationPipe } from '@nestjs/common';
 import { Player } from '../../entities/players.entity';
 import { PlayerService } from '../../players.service';
 import { CreatePlayerDto } from '../../dto/players.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Player')
 @Controller('players')
 export class PlayerController {
   constructor(private PlayerService: PlayerService) {}
   @Get()
+  @ApiOperation({
+    summary: 'get all player',
+  })
   async findAll(@Res() res) {
     const response = await this.PlayerService.findAll();
     if (!response) {
@@ -33,6 +36,7 @@ export class PlayerController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Get('playerId')
+  @ApiOperation({ summary: 'get player by id' })
   async findOne(@Query('id') id: string, @Res() res) {
     const response = await this.PlayerService.findOne(id);
     if (!response) {
@@ -42,11 +46,13 @@ export class PlayerController {
   }
 
   @Get('search/key')
+  @ApiOperation({ summary: 'search player by key' })
   async sarch(@Query('keyword') keyword: string) {
     return this.PlayerService.searchPlayers(keyword);
   }
 
   @Post()
+  @ApiOperation({ summary: 'create player' })
   async create(
     @Body(new ValidationPipe()) createplayerdto: CreatePlayerDto,
     @Res() res,
@@ -65,6 +71,7 @@ export class PlayerController {
     return res.status(HttpStatus.CREATED).json(response);
   }
   @Put(':id')
+  @ApiOperation({ summary: 'update player' })
   async update(
     @Param('id') id: string,
     @Body(new ValidationPipe()) createplayerdto: CreatePlayerDto,
@@ -78,6 +85,7 @@ export class PlayerController {
     return res.status(HttpStatus.OK).json(response);
   }
   @Delete(':id')
+  @ApiOperation({ summary: 'delete player' })
   async delete(@Param('id') id: string, @Res() res) {
     const result = await this.PlayerService.remove(id);
     const response = {
