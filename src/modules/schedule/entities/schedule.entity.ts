@@ -5,11 +5,13 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Team } from '../../teams/entities/teams.entity';
 import { League } from '../../league/entities/league.entity';
 import { TimestampTransformer } from 'src/modules/statistics/transformers/timestamp.transformer';
+import { Statistics } from 'src/modules/statistics/entities/statistics.entity';
 
 @Entity()
 export class Schedule {
@@ -46,6 +48,7 @@ export class Schedule {
   @ManyToOne(() => League, (league) => league.shedule)
   league: League;
 
-  // @OneToMany(() => Statitics, (statistics) => statistics.schedule)
-  // statistics: Statitics[];
+  @OneToOne(() => Statistics)
+  @JoinColumn()
+  statistics: Statistics;
 }

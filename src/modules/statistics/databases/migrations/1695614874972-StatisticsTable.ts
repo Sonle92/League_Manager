@@ -5,7 +5,8 @@ export class StatisticsTable1695614874972 extends BaseMigration {
   async run(queryRunner: QueryRunner) {
     await this.create('statistics', (table) => {
       table.primaryUuid('id');
-      table.timestamp('date');
+      table.uuid('goalId').nullable().foreign('goal');
+      table.uuid('cardId').nullable().foreign('card');
     });
   }
 

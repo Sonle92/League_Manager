@@ -26,17 +26,17 @@ import { UploadedFileDto } from '../../dto/statistics.dto';
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @Post('create')
-  async createExample(@Body() dto: UploadedFileDto): Promise<any> {
-    const example = await this.statisticsService.create(dto);
-    return `Created Statistics with ID: ${example.id} vs DATE: ${example.date}`;
-  }
-  @Get(':date')
-  async findOne(@Query('date') date: number, @Res() res) {
-    const response = await this.statisticsService.findDate(date);
-    if (!response) {
-      throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
-    }
-    return res.status(HttpStatus.OK).json(response);
-  }
+  // @Post('create')
+  // async createExample(@Body() dto: UploadedFileDto): Promise<any> {
+  //   const example = await this.statisticsService.create(dto);
+  //   return `Created Statistics with ID: ${example.id} vs DATE: ${example.date}`;
+  // }
+  // @Get(':date')
+  // async findOne(@Query('date') date: number, @Res() res) {
+  //   const response = await this.statisticsService.findDate(date);
+  //   if (!response) {
+  //     throw new HttpException('Object does not exist', HttpStatus.NOT_FOUND);
+  //   }
+  //   return res.status(HttpStatus.OK).json(response);
+  // }
 }
