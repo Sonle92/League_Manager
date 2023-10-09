@@ -27,6 +27,7 @@ import { CreateLeagueTeamDto } from 'src/modules/leagueTeam/dto/leagueTeam.dto';
 import { FilesAzureService } from 'src/modules/upload/upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CustomFileInterceptor } from '../../validators/uploadFile.validator';
+import { UploadLogoTeam } from '../../dto/uploadLogo.dto';
 
 @ApiTags('CRUD-Teams')
 @Controller('teams')
@@ -73,36 +74,6 @@ export class TeamsController {
     return { message: 'Add new league to team successfully', response };
   }
 
-  // @Post('upload')
-  // @ApiConsumes('multipart/form-data')
-  // @ApiBody({ type: UploadFileDto })
-  // @UseInterceptors(FileInterceptor('logo'))
-  // async upload(
-  //   @UploadedFile() file: Express.Multer.File,
-  //   @Body() uploadFileDto: UploadFileDto,
-  // ) {
-  //   const containerName = 'demo1';
-  //   const upload = await this.fileService.uploadFile(file, containerName);
-  //   this.teamsService.saveUrl(upload, uploadFileDto);
-  //   return { upload, message: 'uploaded successfully' };
-  // }
-
-  // @Put('uploadLogo')
-  // @ApiConsumes('multipart/form-data')
-  // @UseInterceptors(FileInterceptor('logo'))
-  // @ApiBody({ type: UploadLogoTeam })
-  // async uploadLogoTeam(
-  //   @UploadedFile() file: Express.Multer.File,
-  //   @Query('id') id: string,
-  // ) {
-  //   const containerName = 'demo1';
-  //   const upload = await this.fileService.uploadFile(file, containerName);
-  //   console.log(upload);
-  //   this.teamsService.saveUrl(upload, id);
-
-  //   return { upload, message: 'uploaded successfully' };
-  // }
-
   @Get()
   @ApiOperation({
     summary: 'get all team',
@@ -143,5 +114,21 @@ export class TeamsController {
       data: result,
     };
     return res.status(HttpStatus.OK).json(response);
+  }
+  @Put('uploadLogo')
+  @ApiOperation({
+    summary: 'upload logo for team',
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('logo'), CustomFileInterceptor)
+  @ApiBody({ type: UploadLogoTeam })
+  async uploadLogoTeam(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('id') id: string,
+  ) {
+    const containerName = 'demo1';
+    const upload = await this.fileService.uploadFile(file, containerName);
+    await this.teamsService.updateImage(upload, id);
+    return { upload, message: 'uploaded successfully' };
   }
 }

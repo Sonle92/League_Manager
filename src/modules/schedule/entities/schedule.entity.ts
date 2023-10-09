@@ -47,8 +47,4 @@ export class Schedule {
 
   @ManyToOne(() => League, (league) => league.shedule)
   league: League;
-
-  @OneToOne(() => Statistics)
-  @JoinColumn()
-  statistics: Statistics;
 }

@@ -32,7 +32,7 @@ export class CustomFileInterceptor implements NestInterceptor {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const maxFileSizeInBytes = 5 * 1024 * 1024 * 1024; // 5GB
+    const maxFileSizeInBytes = 5 * 1024 * 1024 * 1024;
     if (file.size > maxFileSizeInBytes) {
       throw new HttpException(
         { message: 'File Size Exceeds Limit' },

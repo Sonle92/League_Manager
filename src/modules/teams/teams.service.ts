@@ -98,4 +98,13 @@ export class TeamsService {
     const result = await this.teamsRepository.save(team);
     return result;
   }
+
+  async updateImage(file_url: string, id: string): Promise<any> {
+    const myteam = await this.teamsRepository.findOne({
+      where: { id },
+    });
+    myteam.logo = file_url;
+    const result = await this.teamsRepository.save(myteam);
+    return result;
+  }
 }
